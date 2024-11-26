@@ -1,0 +1,35 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "infogrep.aiService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.AiService.name "name" .Values.AiService.name) | nindent 4 }}
+    {{- with .Values.AiService.ingress.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.AiService.ingress.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  ingressClassName: {{ .Values.AiService.ingress.ingressClassName }}
+  rules:
+    - host: {{ .Values.AiService.ingress.hostname | default .Values.domain }}
+      http:
+        paths:
+          {{- with .Values.AiService.ingress.extraPaths }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
+          - path: {{ .Values.AiService.ingress.path }}
+            pathType: {{ $.Values.AiService.ingress.pathType }}
+            backend:
+              service:
+                name: {{ include "infogrep.aiService.fullname" . }}
+                port:
+                  number: {{ .Values.AiService.service.servicePortHttp }}
+    {{- with .Values.AiService.ingress.extraRules }}
+      {{- tpl (toYaml .) $ | nindent 4 }}
+    {{- end }}

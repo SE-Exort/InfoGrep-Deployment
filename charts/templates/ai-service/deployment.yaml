@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "infogrep.aiService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.AiService.name "name" .Values.AiService.name) | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.AiService.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.AiService.name "name" .Values.AiService.name) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "infogrep.aiService.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.AiService.serviceAccount.automountServiceAccountToken }}
+    {{- with .Values.AiService.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Values.AiService.name }}
+          image: "{{ .Values.AiService.image.repository }}:{{ .Values.AiService.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.AiService.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.AiService.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.AiService.containerPorts.server }}
