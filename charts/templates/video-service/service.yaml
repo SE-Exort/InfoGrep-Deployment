@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "infogrep.videoService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.VideoService.name "name" .Values.VideoService.name) | nindent 4 }}
+    {{- with .Values.VideoService.service.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.VideoService.service.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.VideoService.service.type }}
+  selector:
+    {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.VideoService.name) | nindent 4 }}
+  ports:
+    - name: {{ .Values.VideoService.service.servicePortHttpName }}
+      protocol: TCP
+      port: {{ .Values.VideoService.service.servicePortHttp }}
+      targetPort: {{ .Values.VideoService.containerPorts.server }}
+      {{- if eq .Values.VideoService.service.type "NodePort" }}
+      nodePort: {{ .Values.VideoService.service.nodePortHttp }}
+      {{- end }}

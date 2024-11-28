@@ -25,3 +25,15 @@
 {{- define "infogrep.authPostgres.fullname" -}}
 {{- printf "%s-%s" (include "infogrep.fullname" .) .Values.AuthPostgres.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
+
+{{- define "infogrep.videoService.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VideoService.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "infogrep.videoService.serviceAccountName" -}}
+{{- if .Values.VideoService.serviceAccount.create -}}
+    {{ default (include "infogrep.videoService.fullname" .) .Values.VideoService.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.VideoService.serviceAccount.name }}
+{{- end -}}
+{{- end -}}

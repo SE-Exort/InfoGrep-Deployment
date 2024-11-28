@@ -15,6 +15,9 @@ apiVersionOverrides: {}
 replicaCount: 1
 namespace: infogrep
 domain: local.infogrep.ai
+KeyConfig:
+  openaiKey: ""
+  serpapiKey: ""
 
 # -- Ai Service Config
 AiService:
@@ -193,3 +196,50 @@ AuthPostgres:
   env:
     username: postgres
     password: example
+
+# -- Video Service Config
+VideoService:
+  name: video-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/video-service
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- GHCR Image Pull Secret
+  imagePullSecrets:
+    - name: ghcr
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: video-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 8879
+  # -- Resource Limits
+  resources:
+   limits:
+      cpu: 1.0
+      memory: 1Gi
+   requests:
+      cpu: 1.0
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30083
+    servicePortHttp: 8879
+    servicePortHttpName: video-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
