@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "infogrep.authService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.AuthService.name "name" .Values.AuthService.name) | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.AuthService.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.AuthService.name "name" .Values.AuthService.name) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "infogrep.authService.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.AuthService.serviceAccount.automountServiceAccountToken }}
+    {{- with .Values.AuthService.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Values.AuthService.name }}
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-pg-creds
+                  key: password
+                  optional: false
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-pg-creds
+                  key: username
+                  optional: false
+            - name: PGHOST
+              valueFrom:
+                configMapKeyRef:
+                  name: auth-service-pg-configs
+                  key: pgHost
+                  optional: false
+          image: "{{ .Values.AuthService.image.repository }}:{{ .Values.AuthService.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.AuthService.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.AuthService.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.AuthService.containerPorts.server }}
+      initContainers:
+      {{- with .Values.AuthService.initContainers }}
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}

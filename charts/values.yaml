@@ -16,22 +16,19 @@ replicaCount: 1
 namespace: infogrep
 domain: local.infogrep.ai
 
+# -- Ai Service Config
 AiService:
   name: ai-service
-
   # -- Default namespace
   namespace: ""
-
   # -- GHCR Config
   image:
     repository: ghcr.io/se-exort/ai-service
     pullPolicy: IfNotPresent
     tag: latest
-  
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
-  
   # -- Service Account
   serviceAccount:
     create: true
@@ -39,11 +36,9 @@ AiService:
     annotations: {}
     labels: {}
     automountServiceAccountToken: true
-  
   # -- Container Ports
   containerPorts:
     server: 8004
-
   # -- Resource Limits
   resources:
    limits:
@@ -52,7 +47,6 @@ AiService:
    requests:
       cpu: 500m
       memory: 512Mi
-
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -68,7 +62,6 @@ AiService:
     externalIPs: []
     externalTrafficPolicy: Cluster
     sessionAffinity: None
-
   # -- Ingress configuration
   ingress:
     enabled: true
@@ -88,3 +81,117 @@ AiService:
     extraPaths: []
     extraRules: []
     extraTls: []
+
+# -- Authentication Service Config
+AuthService:
+  name: auth-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/auth-service
+    pullPolicy: IfNotPresent
+    tag: dev
+  # -- GHCR Image Pull Secret
+  imagePullSecrets:
+    - name: ghcr
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: auth-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 4000
+  # -- Resource Limits
+  resources:
+   limits:
+      cpu: 500m
+      memory: 1Gi
+   requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30081
+    servicePortHttp: 4000
+    servicePortHttpName: auth-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+  # -- Authentication Service Init Containers
+  initContainers:
+    - name: wait-for-postgres
+      image: busybox
+      command: ["/bin/sh","-c"]
+      args: ["until echo 'Waiting for auth service postgres...' && nc -vz -w 2 $PGHOST 5432; do echo 'Looping forever...'; sleep 2; done;"]
+      env:
+        - name: PGHOST
+          valueFrom:
+            configMapKeyRef:
+              name: auth-service-pg-configs
+              key: pgHost
+              optional: false
+
+# -- Auth Service Postgres Config
+AuthPostgres:
+  # -- Auth Postgress Name
+  name: auth-postgres
+  # -- Default Docker Hub Postgres Image
+  image:
+    repository: postgres
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- Default namespace
+  namespace: ""
+  # -- Postgres Resource Config 
+  resources:
+    limits:
+        cpu: 500m
+        memory: 1Gi
+    requests:
+        cpu: 500m
+        memory: 512Mi
+  # -- Container Ports
+  containerPorts:
+    postgres: 5432
+  # -- Postgres Readiness Probe
+  readinessProbe:
+    enabled: true
+    command: 
+      - "pg_isready" 
+      - "-U" 
+      - "postgres"
+    failureThreshold: 3
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    successThreshold: 1
+    timeoutSeconds: 5
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30082
+    servicePortHttp: 5432
+    servicePortHttpName: auth-postgres-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+  # -- Postgres Env
+  env:
+    username: postgres
+    password: example

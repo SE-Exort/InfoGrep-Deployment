@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "infogrep.authService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.AuthService.name "name" .Values.AuthService.name) | nindent 4 }}
+    {{- with .Values.AuthService.service.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.AuthService.service.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.AuthService.service.type }}
+  selector:
+    {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.AuthService.name) | nindent 4 }}
+  ports:
+    - name: {{ .Values.AuthService.service.servicePortHttpName }}
+      protocol: TCP
+      port: {{ .Values.AuthService.service.servicePortHttp }}
+      targetPort: {{ .Values.AuthService.containerPorts.server }}
+      {{- if eq .Values.AuthService.service.type "NodePort" }}
+      nodePort: {{ .Values.AuthService.service.nodePortHttp }}
+      {{- end }}
