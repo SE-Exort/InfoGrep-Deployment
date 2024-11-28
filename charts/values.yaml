@@ -72,9 +72,7 @@ AiService:
       kubernetes.io/ingress.class: "nginx"
     ingressClassName: nginx
     hostname: ""
-    # -- The path to Argo CD server
     path: /
-    # -- Ingress path type. One of `Exact`, `Prefix` or `ImplementationSpecific`
     pathType: Prefix
     tls: false
     extraHosts: []
