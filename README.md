@@ -4,7 +4,7 @@ Helm Charts for deploying InfoGrep
 
 ## Steps (Local Minikube)
 
-1. [Install Docker](https://docker.com) if you haven't.
+1. [Install Docker](https://docker.com) if you haven't, and make sure it's running the latest version
 2. [Install Helm](https://helm.sh/docs/intro/install/) if you haven't.
 3. For Mac users on Apple Silicon Chips, run a `sudo softwareupdate --install-rosetta`
 4. Go to the [minikube installer page](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Farm64%2Fstable%2Fbinary+download) and download minikube.
