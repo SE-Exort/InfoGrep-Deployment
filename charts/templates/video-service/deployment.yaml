@@ -6,7 +6,11 @@ metadata:
   labels:
     {{- include "infogrep.labels" (dict "context" . "component" .Values.VideoService.name "name" .Values.VideoService.name) | nindent 4 }}
 spec:
+  {{- if .Values.VideoService.replicaCount }}
+  replicas: {{ .Values.VideoService.replicaCount }}
+  {{- else }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.VideoService.name) | nindent 6 }}

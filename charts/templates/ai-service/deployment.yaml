@@ -6,7 +6,11 @@ metadata:
   labels:
     {{- include "infogrep.labels" (dict "context" . "component" .Values.AiService.name "name" .Values.AiService.name) | nindent 4 }}
 spec:
+  {{- if .Values.AiService.replicaCount }}
+  replicas: {{ .Values.AiService.replicaCount }}
+  {{- else }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.AiService.name) | nindent 6 }}

@@ -6,7 +6,11 @@ metadata:
   labels:
     {{- include "infogrep.labels" (dict "context" . "component" .Values.FileManagementService.name "name" .Values.FileManagementService.name) | nindent 4 }}
 spec:
+  {{- if .Values.FileManagementService.replicaCount }}
+  replicas: {{ .Values.FileManagementService.replicaCount }}
+  {{- else }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.FileManagementService.name) | nindent 6 }}

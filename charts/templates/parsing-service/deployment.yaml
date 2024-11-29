@@ -6,7 +6,11 @@ metadata:
   labels:
     {{- include "infogrep.labels" (dict "context" . "component" .Values.ParsingService.name "name" .Values.ParsingService.name) | nindent 4 }}
 spec:
+  {{- if .Values.ParsingService.replicaCount }}
+  replicas: {{ .Values.ParsingService.replicaCount }}
+  {{- else }}
   replicas: {{ .Values.replicaCount }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.ParsingService.name) | nindent 6 }}

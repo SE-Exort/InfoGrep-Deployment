@@ -147,6 +147,7 @@ AuthService:
 AuthPostgres:
   # -- Auth Postgress Name
   name: auth-postgres
+  replicaCount: 2
   # -- Default Docker Hub Postgres Image
   image:
     repository: postgres
