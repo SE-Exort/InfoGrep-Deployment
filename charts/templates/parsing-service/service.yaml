@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "infogrep.parsingService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.ParsingService.name "name" .Values.ParsingService.name) | nindent 4 }}
+    {{- with .Values.ParsingService.service.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.ParsingService.service.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.ParsingService.service.type }}
+  selector:
+    {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.ParsingService.name) | nindent 4 }}
+  ports:
+    - name: {{ .Values.ParsingService.service.servicePortHttpName }}
+      protocol: TCP
+      port: {{ .Values.ParsingService.service.servicePortHttp }}
+      targetPort: {{ .Values.ParsingService.containerPorts.server }}
+      {{- if eq .Values.ParsingService.service.type "NodePort" }}
+      nodePort: {{ .Values.ParsingService.service.nodePortHttp }}
+      {{- end }}

@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "infogrep.parsingService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.ParsingService.name "name" .Values.ParsingService.name) | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.ParsingService.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.ParsingService.name "name" .Values.ParsingService.name) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "infogrep.parsingService.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.ParsingService.serviceAccount.automountServiceAccountToken }}
+    {{- with .Values.ParsingService.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Values.ParsingService.name }}
+          image: "{{ .Values.ParsingService.image.repository }}:{{ .Values.ParsingService.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.ParsingService.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.ParsingService.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.ParsingService.containerPorts.server }}

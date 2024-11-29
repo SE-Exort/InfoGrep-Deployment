@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "infogrep.fileManagementService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.FileManagementService.name "name" .Values.FileManagementService.name) | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.FileManagementService.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.FileManagementService.name "name" .Values.FileManagementService.name) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "infogrep.fileManagementService.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.FileManagementService.serviceAccount.automountServiceAccountToken }}
+    {{- with .Values.FileManagementService.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Values.FileManagementService.name }}
+          image: "{{ .Values.FileManagementService.image.repository }}:{{ .Values.FileManagementService.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.FileManagementService.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.FileManagementService.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.FileManagementService.containerPorts.server }}

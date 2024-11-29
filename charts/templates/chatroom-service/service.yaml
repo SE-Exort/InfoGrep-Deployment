@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "infogrep.chatroomService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.ChatroomService.name "name" .Values.ChatroomService.name) | nindent 4 }}
+    {{- with .Values.ChatroomService.service.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.ChatroomService.service.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.ChatroomService.service.type }}
+  selector:
+    {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.ChatroomService.name) | nindent 4 }}
+  ports:
+    - name: {{ .Values.ChatroomService.service.servicePortHttpName }}
+      protocol: TCP
+      port: {{ .Values.ChatroomService.service.servicePortHttp }}
+      targetPort: {{ .Values.ChatroomService.containerPorts.server }}
+      {{- if eq .Values.ChatroomService.service.type "NodePort" }}
+      nodePort: {{ .Values.ChatroomService.service.nodePortHttp }}
+      {{- end }}

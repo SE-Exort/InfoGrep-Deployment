@@ -243,3 +243,144 @@ VideoService:
     externalIPs: []
     externalTrafficPolicy: Cluster
     sessionAffinity: None
+
+# -- Chatroom Service Config
+ChatroomService:
+  name: chatroom-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/chatroom-service
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- GHCR Image Pull Secret
+  imagePullSecrets:
+    - name: ghcr
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: chatroom-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 8003
+  # -- Resource Limits
+  resources:
+   limits:
+      cpu: 500m
+      memory: 1Gi
+   requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30084
+    servicePortHttp: 8003
+    servicePortHttpName: chatroom-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+
+# -- Parsing Service Config
+ParsingService:
+  name: parsing-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/parsing-service
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- GHCR Image Pull Secret
+  imagePullSecrets:
+    - name: ghcr
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: parsing-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 8001
+  # -- Resource Limits
+  resources:
+   limits:
+      cpu: 500m
+      memory: 1Gi
+   requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30085
+    servicePortHttp: 8001
+    servicePortHttpName: parsing-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+
+# -- File Management Service Config
+FileManagementService:
+  name: file-management-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/file-management-service
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- GHCR Image Pull Secret
+  imagePullSecrets:
+    - name: ghcr
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: file-management-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 8002
+  # -- Resource Limits
+  resources:
+   limits:
+      cpu: 500m
+      memory: 1Gi
+   requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30086
+    servicePortHttp: 8002
+    servicePortHttpName: file-management-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
