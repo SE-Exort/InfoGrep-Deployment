@@ -197,6 +197,26 @@ AuthPostgres:
   env:
     username: postgres
     password: example
+  # -- PVC Config
+  persistence:
+    claimName: auth-postgres-pv-claim
+    volumeName: auth-postgres-pv
+    mountPath: "/var/lib/postgresql/data"
+    hostPath: "/data"
+    annotations:
+      helm.sh/resource-policy: delete
+    storageClass: local-storage
+    size: 2Gi
+    accessModes: 
+      - ReadWriteMany
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - minikube
 
 # -- Video Service Config
 VideoService:

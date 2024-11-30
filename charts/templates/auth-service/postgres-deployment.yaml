@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ template "infogrep.authPostgres.fullname" . }}
   namespace: {{ .Values.namespace }}
@@ -51,3 +51,10 @@ spec:
             failureThreshold: {{ .Values.AuthPostgres.readinessProbe.failureThreshold }}
           ports:
             - containerPort: {{ .Values.AuthPostgres.containerPorts.postgres }}
+          volumeMounts:
+            - mountPath: {{ .Values.AuthPostgres.persistence.mountPath }}
+              name: {{ .Values.AuthPostgres.persistence.volumeName }}
+      volumes:
+        - name: {{ .Values.AuthPostgres.persistence.volumeName }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.AuthPostgres.persistence.claimName }}
