@@ -147,7 +147,7 @@ AuthService:
 AuthPostgres:
   # -- Auth Postgress Name
   name: auth-postgres
-  replicaCount: 2
+  replicaCount: 1
   # -- Default Docker Hub Postgres Image
   image:
     repository: postgres
@@ -203,12 +203,10 @@ AuthPostgres:
     volumeName: auth-postgres-pv
     mountPath: "/var/lib/postgresql/data"
     hostPath: "/data"
-    annotations:
-      helm.sh/resource-policy: delete
     storageClass: local-storage
     size: 2Gi
     accessModes: 
-      - ReadWriteMany
+      - ReadWriteOnce
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -405,3 +403,212 @@ FileManagementService:
     externalIPs: []
     externalTrafficPolicy: Cluster
     sessionAffinity: None
+
+# -- Vector Management Service Config
+VectorManagementService:
+  name: vector-management-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/vector-management-service
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- GHCR Image Pull Secret
+  imagePullSecrets:
+    - name: ghcr
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: vector-management-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 8800
+  # -- Resource Limits
+  resources:
+   limits:
+      cpu: 500m
+      memory: 1Gi
+   requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30087
+    servicePortHttp: 8800
+    servicePortHttpName: vector-management-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+
+# -- Vector Management etcd Config
+VectorEtcd:
+  # -- Vector etcd Name
+  name: vector-etcd
+  replicaCount: 1
+  # -- Default QuayIO Image
+  image:
+    repository: quay.io/coreos/etcd
+    pullPolicy: IfNotPresent
+    tag: v3.5.0
+  # -- Default namespace
+  namespace: ""
+  # -- Etcd Resource Config 
+  resources:
+    limits:
+        cpu: 1.0
+        memory: 2Gi
+    requests:
+        cpu: 1.0
+        memory: 1.5Gi
+  # -- Container Ports
+  containerPorts:
+    etcd: 2379
+  # -- Service Account
+  serviceAccount:
+    create: false
+    name: vector-etcd-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30088
+    servicePortHttp: 2379
+    servicePortHttpName: vector-etcd-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+  # -- etcd Container Startup Command
+  args:
+    - etcd
+    - -advertise-client-urls=http://127.0.0.1:2379
+    - -listen-client-urls
+    - http://0.0.0.0:2379
+    - --data-dir
+    - /etcd
+  # -- etcd Env
+  env:
+    ETCD_AUTO_COMPACTION_MODE: revision
+    ETCD_AUTO_COMPACTION_RETENTION: 1000
+    ETCD_QUOTA_BACKEND_BYTES: "4294967296"
+  # -- etcd PVC Config
+  persistence:
+    claimName: vector-etcd-pv-claim
+    volumeName: vector-etcd-pv
+    mountPath: "/etcd"
+    hostPath: "/var/backups"
+    storageClass: local-storage
+    size: 5Gi
+    accessModes: 
+      - ReadWriteOnce
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - minikube
+
+# -- Vector Management Minio Config
+VectorMinio:
+  # -- Vector Minio Name
+  name: vector-minio
+  replicaCount: 1
+  # -- Default Minio Image
+  image:
+    repository: minio/minio
+    pullPolicy: IfNotPresent
+    tag: RELEASE.2020-12-03T00-03-10Z
+  # -- Default namespace
+  namespace: ""
+  # -- Minio Resource Config 
+  resources:
+    limits:
+        cpu: 1.0
+        memory: 2Gi
+    requests:
+        cpu: 1.0
+        memory: 1.5Gi
+  # -- Container Ports
+  containerPorts:
+    minio: 9000
+  # -- Service Account
+  serviceAccount:
+    create: false
+    name: vector-minio-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30089
+    servicePortHttp: 9000
+    servicePortHttpName: vector-minio-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+  # -- Minio Container Startup Command
+  args:
+    - minio
+    - server
+    - /minio_data
+  # -- Minio Env
+  env:
+    MINIO_ACCESS_KEY: minioadmin
+    MINIO_SECRET_KEY: minioadmin
+  # -- Minio Readiness Probe
+  readinessProbe:
+    enabled: true
+    command: 
+      - "curl" 
+      - "-f" 
+      - "http://localhost:9000/minio/health/live"
+    failureThreshold: 3
+    initialDelaySeconds: 20
+    periodSeconds: 30
+    successThreshold: 1
+    timeoutSeconds: 20
+  # -- Minio PVC Config
+  persistence:
+    claimName: vector-minio-pv-claim
+    volumeName: vector-minio-pv
+    mountPath: "/minio_data"
+    hostPath: "/usr/local/games"
+    storageClass: local-storage
+    size: 5Gi
+    accessModes: 
+      - ReadWriteOnce
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - minikube

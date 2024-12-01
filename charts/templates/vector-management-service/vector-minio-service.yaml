@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "infogrep.vectorMinio.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.VectorMinio.name "name" .Values.VectorMinio.name) | nindent 4 }}
+    {{- with .Values.VectorMinio.service.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.VectorMinio.service.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.VectorMinio.service.type }}
+  selector:
+    {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.VectorMinio.name) | nindent 4 }}
+  ports:
+    - name: {{ .Values.VectorMinio.service.servicePortHttpName }}
+      protocol: TCP
+      port: {{ .Values.VectorMinio.service.servicePortHttp }}
+      targetPort: {{ .Values.VectorMinio.containerPorts.minio }}
+      {{- if eq .Values.VectorMinio.service.type "NodePort" }}
+      nodePort: {{ .Values.VectorMinio.service.nodePortHttp }}
+      {{- end }}

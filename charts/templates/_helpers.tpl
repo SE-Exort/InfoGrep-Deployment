@@ -73,3 +73,39 @@
     {{ default "default" .Values.FileManagementService.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "infogrep.vectorManagementService.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorManagementService.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "infogrep.vectorManagementService.serviceAccountName" -}}
+{{- if .Values.VectorManagementService.serviceAccount.create -}}
+    {{ default (include "infogrep.vectorManagementService.fullname" .) .Values.VectorManagementService.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.VectorManagementService.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
+
+{{- define "infogrep.vectorEtcd.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorEtcd.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "infogrep.vectorEtcd.serviceAccountName" -}}
+{{- if .Values.VectorEtcd.serviceAccount.create -}}
+    {{ default (include "infogrep.fileManagementService.fullname" .) .Values.VectorEtcd.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.VectorEtcd.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
+
+{{- define "infogrep.vectorMinio.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorMinio.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "infogrep.vectorMinio.serviceAccountName" -}}
+{{- if .Values.VectorMinio.serviceAccount.create -}}
+    {{ default (include "infogrep.vectorMinio.fullname" .) .Values.VectorMinio.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.VectorMinio.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
