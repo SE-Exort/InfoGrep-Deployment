@@ -44,10 +44,10 @@ AiService:
     server: 8004
   # -- Resource Limits
   resources:
-   limits:
+    limits:
       cpu: 500m
       memory: 1Gi
-   requests:
+    requests:
       cpu: 500m
       memory: 512Mi
   # -- K8s Service Configuration
@@ -108,10 +108,10 @@ AuthService:
     server: 4000
   # -- Resource Limits
   resources:
-   limits:
+    limits:
       cpu: 500m
       memory: 1Gi
-   requests:
+    requests:
       cpu: 500m
       memory: 512Mi
   # -- K8s Service Configuration
@@ -133,8 +133,11 @@ AuthService:
   initContainers:
     - name: wait-for-postgres
       image: busybox
-      command: ["/bin/sh","-c"]
-      args: ["until echo 'Waiting for auth service postgres...' && nc -vz -w 2 $PGHOST 5432; do echo 'Looping forever...'; sleep 2; done;"]
+      command: ["/bin/sh", "-c"]
+      args:
+        [
+          "until echo 'Waiting for auth service postgres...' && nc -vz -w 2 $PGHOST 5432; do echo 'Looping forever...'; sleep 2; done;",
+        ]
       env:
         - name: PGHOST
           valueFrom:
@@ -155,23 +158,23 @@ AuthPostgres:
     tag: latest
   # -- Default namespace
   namespace: ""
-  # -- Postgres Resource Config 
+  # -- Postgres Resource Config
   resources:
     limits:
-        cpu: 500m
-        memory: 1Gi
+      cpu: 500m
+      memory: 1Gi
     requests:
-        cpu: 500m
-        memory: 512Mi
+      cpu: 500m
+      memory: 512Mi
   # -- Container Ports
   containerPorts:
     postgres: 5432
   # -- Postgres Readiness Probe
   readinessProbe:
     enabled: true
-    command: 
-      - "pg_isready" 
-      - "-U" 
+    command:
+      - "pg_isready"
+      - "-U"
       - "postgres"
     failureThreshold: 3
     initialDelaySeconds: 10
@@ -205,16 +208,16 @@ AuthPostgres:
     hostPath: "/data"
     storageClass: local-storage
     size: 2Gi
-    accessModes: 
+    accessModes:
       - ReadWriteOnce
     nodeAffinity:
       required:
         nodeSelectorTerms:
-        - matchExpressions:
-          - key: kubernetes.io/hostname
-            operator: In
-            values:
-            - minikube
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - minikube
 
 # -- Video Service Config
 VideoService:
@@ -241,10 +244,10 @@ VideoService:
     server: 8879
   # -- Resource Limits
   resources:
-   limits:
+    limits:
       cpu: 1.0
       memory: 1Gi
-   requests:
+    requests:
       cpu: 1.0
       memory: 512Mi
   # -- K8s Service Configuration
@@ -288,10 +291,10 @@ ChatroomService:
     server: 8003
   # -- Resource Limits
   resources:
-   limits:
+    limits:
       cpu: 500m
       memory: 1Gi
-   requests:
+    requests:
       cpu: 500m
       memory: 512Mi
   # -- K8s Service Configuration
@@ -335,10 +338,10 @@ ParsingService:
     server: 8001
   # -- Resource Limits
   resources:
-   limits:
+    limits:
       cpu: 500m
       memory: 1Gi
-   requests:
+    requests:
       cpu: 500m
       memory: 512Mi
   # -- K8s Service Configuration
@@ -382,10 +385,10 @@ FileManagementService:
     server: 8002
   # -- Resource Limits
   resources:
-   limits:
+    limits:
       cpu: 500m
       memory: 1Gi
-   requests:
+    requests:
       cpu: 500m
       memory: 512Mi
   # -- K8s Service Configuration
@@ -413,7 +416,7 @@ VectorManagementService:
   image:
     repository: ghcr.io/se-exort/vector-management-service
     pullPolicy: IfNotPresent
-    tag: latest
+    tag: demo
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -432,10 +435,10 @@ VectorManagementService:
     server: 8800
   # -- Resource Limits
   resources:
-   limits:
+    limits:
       cpu: 500m
       memory: 1Gi
-   requests:
+    requests:
       cpu: 500m
       memory: 512Mi
   # -- K8s Service Configuration
@@ -457,8 +460,11 @@ VectorManagementService:
   initContainers:
     - name: wait-for-milvus
       image: busybox
-      command: ["/bin/sh","-c"]
-      args: ["until echo 'Waiting for vector milvus...' && nc -vz -w 2 $MILVUS_HOST 19530; do echo 'Looping forever...'; sleep 2; done;"]
+      command: ["/bin/sh", "-c"]
+      args:
+        [
+          "until echo 'Waiting for vector milvus...' && nc -vz -w 2 $MILVUS_HOST 19530; do echo 'Looping forever...'; sleep 2; done;",
+        ]
       env:
         - name: MILVUS_HOST
           valueFrom:
@@ -479,14 +485,14 @@ VectorEtcd:
     tag: v3.5.0
   # -- Default namespace
   namespace: ""
-  # -- Etcd Resource Config 
+  # -- Etcd Resource Config
   resources:
     limits:
-        cpu: 1.0
-        memory: 2Gi
+      cpu: 1.0
+      memory: 2Gi
     requests:
-        cpu: 1.0
-        memory: 1.5Gi
+      cpu: 1.0
+      memory: 1.5Gi
   # -- Container Ports
   containerPorts:
     etcd: 2379
@@ -533,16 +539,16 @@ VectorEtcd:
     hostPath: "/var/backups"
     storageClass: local-storage
     size: 5Gi
-    accessModes: 
+    accessModes:
       - ReadWriteOnce
     nodeAffinity:
       required:
         nodeSelectorTerms:
-        - matchExpressions:
-          - key: kubernetes.io/hostname
-            operator: In
-            values:
-            - minikube
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - minikube
 
 # -- Vector Management Minio Config
 VectorMinio:
@@ -556,14 +562,14 @@ VectorMinio:
     tag: RELEASE.2020-12-03T00-03-10Z
   # -- Default namespace
   namespace: ""
-  # -- Minio Resource Config 
+  # -- Minio Resource Config
   resources:
     limits:
-        cpu: 1.0
-        memory: 2Gi
+      cpu: 1.0
+      memory: 2Gi
     requests:
-        cpu: 1.0
-        memory: 1.5Gi
+      cpu: 1.0
+      memory: 1.5Gi
   # -- Container Ports
   containerPorts:
     minio: 9000
@@ -601,9 +607,9 @@ VectorMinio:
   # -- Minio Readiness Probe
   readinessProbe:
     enabled: true
-    command: 
-      - "curl" 
-      - "-f" 
+    command:
+      - "curl"
+      - "-f"
       - "http://localhost:9000/minio/health/live"
     failureThreshold: 3
     initialDelaySeconds: 20
@@ -618,16 +624,16 @@ VectorMinio:
     hostPath: "/usr/local/games"
     storageClass: local-storage
     size: 5Gi
-    accessModes: 
+    accessModes:
       - ReadWriteOnce
     nodeAffinity:
       required:
         nodeSelectorTerms:
-        - matchExpressions:
-          - key: kubernetes.io/hostname
-            operator: In
-            values:
-            - minikube
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - minikube
 
 # -- Vector Management Milvus Config
 VectorMilvus:
@@ -641,14 +647,14 @@ VectorMilvus:
     tag: latest
   # -- Default namespace
   namespace: ""
-  # -- Milvus Resource Config 
+  # -- Milvus Resource Config
   resources:
     limits:
-        cpu: 1.0
-        memory: 5Gi
+      cpu: 1.0
+      memory: 5Gi
     requests:
-        cpu: 1.0
-        memory: 3Gi
+      cpu: 1.0
+      memory: 3Gi
   # -- Container Ports
   containerPorts:
     milvus: 19530
@@ -691,22 +697,25 @@ VectorMilvus:
     hostPath: "/mnt"
     storageClass: local-storage
     size: 10Gi
-    accessModes: 
+    accessModes:
       - ReadWriteOnce
     nodeAffinity:
       required:
         nodeSelectorTerms:
-        - matchExpressions:
-          - key: kubernetes.io/hostname
-            operator: In
-            values:
-            - minikube
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - minikube
   # -- Milvus Init Containers
   initContainers:
     - name: wait-for-minio-etcd
       image: busybox
-      command: ["/bin/sh","-c"]
-      args: ["until echo 'Waiting for etcd...' && nc -vz -w 2 $ETCD_HOST 2379 && echo 'Waiting for minio...' && nc -vz -w 2 $MINIO_HOST 9000; do echo 'Looping forever...'; sleep 2; done;"]
+      command: ["/bin/sh", "-c"]
+      args:
+        [
+          "until echo 'Waiting for etcd...' && nc -vz -w 2 $ETCD_HOST 2379 && echo 'Waiting for minio...' && nc -vz -w 2 $MINIO_HOST 9000; do echo 'Looping forever...'; sleep 2; done;",
+        ]
       env:
         - name: ETCD_HOST
           valueFrom:
@@ -746,10 +755,10 @@ VectorAttu:
     attu: 3000
   # -- Resource Limits
   resources:
-   limits:
+    limits:
       cpu: 0.5
       memory: 1Gi
-   requests:
+    requests:
       cpu: 0.5
       memory: 1Gi
   # -- K8s Service Configuration
@@ -771,8 +780,11 @@ VectorAttu:
   initContainers:
     - name: wait-for-milvus
       image: busybox
-      command: ["/bin/sh","-c"]
-      args: ["until echo 'Waiting for vector milvus...' && nc -vz -w 2 $MILVUS_HOST 19530; do echo 'Looping forever...'; sleep 2; done;"]
+      command: ["/bin/sh", "-c"]
+      args:
+        [
+          "until echo 'Waiting for vector milvus...' && nc -vz -w 2 $MILVUS_HOST 19530; do echo 'Looping forever...'; sleep 2; done;",
+        ]
       env:
         - name: MILVUS_HOST
           valueFrom:
