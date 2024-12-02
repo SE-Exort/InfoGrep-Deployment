@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "infogrep.vectorMilvus.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.VectorMilvus.name "name" .Values.VectorMilvus.name) | nindent 4 }}
+spec:
+  podManagementPolicy: Parallel
+  {{- if .Values.VectorMilvus.replicaCount }}
+  replicas: {{ .Values.VectorMilvus.replicaCount }}
+  {{- else }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.VectorMilvus.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.VectorMilvus.name "name" .Values.VectorMilvus.name) | nindent 8 }}
+    spec:
+      containers:
+        - name: "{{ .Values.VectorMilvus.name }}"
+          env:
+            - name: ETCD_ENDPOINTS
+              valueFrom:
+                configMapKeyRef:
+                  name: vector-milvus-configs
+                  key: etcdFullHost
+                  optional: false
+            - name: MINIO_ADDRESS
+              valueFrom:
+                configMapKeyRef:
+                  name: vector-milvus-configs
+                  key: minioFullHost
+                  optional: false
+          image: "{{ .Values.VectorMilvus.image.repository }}:{{ .Values.VectorMilvus.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.VectorMilvus.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.VectorMilvus.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.VectorMilvus.containerPorts.milvus }}
+          args:
+            {{- toYaml .Values.VectorMilvus.args | nindent 12}}
+          volumeMounts:
+            - mountPath: {{ .Values.VectorMilvus.persistence.mountPath }}
+              name: {{ .Values.VectorMilvus.persistence.volumeName }}
+      initContainers:
+      {{- with .Values.VectorMilvus.initContainers }}
+        {{- tpl (toYaml .) $ | nindent 6 }}
+      {{- end }}
+      volumes:
+        - name: {{ .Values.VectorMilvus.persistence.volumeName }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.VectorMilvus.persistence.claimName }}

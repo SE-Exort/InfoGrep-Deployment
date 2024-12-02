@@ -417,6 +417,9 @@ VectorManagementService:
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
+  # -- Vector Management Service Env
+  env:
+    MILVUS_HOST: placeholder_milvusservice
   # -- Service Account
   serviceAccount:
     create: true
@@ -450,6 +453,19 @@ VectorManagementService:
     externalIPs: []
     externalTrafficPolicy: Cluster
     sessionAffinity: None
+  # -- Vector Management Init Containers
+  initContainers:
+    - name: wait-for-milvus
+      image: busybox
+      command: ["/bin/sh","-c"]
+      args: ["until echo 'Waiting for vector milvus...' && nc -vz -w 2 $MILVUS_HOST 19530; do echo 'Looping forever...'; sleep 2; done;"]
+      env:
+        - name: MILVUS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: vector-management-service-configs
+              key: milvusHost
+              optional: false
 
 # -- Vector Management etcd Config
 VectorEtcd:
@@ -612,3 +628,155 @@ VectorMinio:
             operator: In
             values:
             - minikube
+
+# -- Vector Management Milvus Config
+VectorMilvus:
+  # -- Vector Milvus Name
+  name: vector-milvus
+  replicaCount: 1
+  # -- Default Milvus Image
+  image:
+    repository: milvusdb/milvus
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- Default namespace
+  namespace: ""
+  # -- Milvus Resource Config 
+  resources:
+    limits:
+        cpu: 1.0
+        memory: 5Gi
+    requests:
+        cpu: 1.0
+        memory: 3Gi
+  # -- Container Ports
+  containerPorts:
+    milvus: 19530
+  # -- Service Account
+  serviceAccount:
+    create: false
+    name: vector-milvus-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30090
+    servicePortHttp: 19530
+    servicePortHttpName: vector-milvus-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+  # -- Milvus Container Startup Command
+  args:
+    - milvus
+    - run
+    - standalone
+  # -- Milvus Env
+  env:
+    ETCD_ENDPOINTS: placeholder_etcdservice
+    MINIO_ADDRESS: placeholder_minioservice
+  # -- Milvus PVC Config
+  persistence:
+    claimName: vector-milvus-pv-claim
+    volumeName: vector-milvus-pv
+    mountPath: "/var/lib/milvus"
+    hostPath: "/mnt"
+    storageClass: local-storage
+    size: 10Gi
+    accessModes: 
+      - ReadWriteOnce
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - minikube
+  # -- Milvus Init Containers
+  initContainers:
+    - name: wait-for-minio-etcd
+      image: busybox
+      command: ["/bin/sh","-c"]
+      args: ["until echo 'Waiting for etcd...' && nc -vz -w 2 $ETCD_HOST 2379 && echo 'Waiting for minio...' && nc -vz -w 2 $MINIO_HOST 9000; do echo 'Looping forever...'; sleep 2; done;"]
+      env:
+        - name: ETCD_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: vector-milvus-configs
+              key: etcdHost
+              optional: false
+        - name: MINIO_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: vector-milvus-configs
+              key: minioHost
+              optional: false
+
+# -- Vector Attu Config
+VectorAttu:
+  name: vector-attu
+  # -- Default namespace
+  namespace: ""
+  # -- Default attu image
+  image:
+    repository: zilliz/attu
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- Attu Env
+  env:
+    MILVUS_URL: placeholder_milvusservice
+  # -- Service Account
+  serviceAccount:
+    create: false
+    name: vector-attu-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    attu: 3000
+  # -- Resource Limits
+  resources:
+   limits:
+      cpu: 0.5
+      memory: 1Gi
+   requests:
+      cpu: 0.5
+      memory: 1Gi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30091
+    servicePortHttp: 3000
+    servicePortHttpName: vector-attu-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+  # -- Vector Attu Init Containers
+  initContainers:
+    - name: wait-for-milvus
+      image: busybox
+      command: ["/bin/sh","-c"]
+      args: ["until echo 'Waiting for vector milvus...' && nc -vz -w 2 $MILVUS_HOST 19530; do echo 'Looping forever...'; sleep 2; done;"]
+      env:
+        - name: MILVUS_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: vector-attu-configs
+              key: milvusHost
+              optional: false

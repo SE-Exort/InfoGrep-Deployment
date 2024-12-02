@@ -1,0 +1,53 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ .Values.VectorMilvus.persistence.claimName }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.VectorMilvus.persistence.claimName "name" .Values.VectorMilvus.persistence.claimName) | nindent 4 }}
+{{- with .Values.VectorMilvus.persistence.annotations  }}
+  annotations:
+    {{ toYaml . | indent 4 }}
+{{- end }}
+spec:
+  storageClassName: {{ .Values.VectorMilvus.persistence.storageClass }}
+  {{- with .Values.VectorMilvus.persistence.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.VectorMilvus.persistence.size }}
+
+---
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ .Values.VectorMilvus.persistence.volumeName }}
+  namespace: {{ .Values.namespace }}
+{{- with .Values.VectorMilvus.persistence.annotations  }}
+  annotations:
+    {{ toYaml . | indent 4 }}
+{{- end }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.VectorMilvus.persistence.volumeName "name" .Values.VectorMilvus.persistence.volumeName) | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.VectorMilvus.persistence.storageClass }}
+  capacity:
+    storage: {{ .Values.VectorMilvus.persistence.size }}
+  {{- with .Values.VectorMilvus.persistence.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if eq .Values.VectorMilvus.persistence.storageClass "manual" }}
+  hostPath:
+    path: {{ .Values.VectorMilvus.persistence.hostPath }}
+  {{- else if eq .Values.VectorMilvus.persistence.storageClass "local-storage" }}
+  local:
+    path: {{ .Values.VectorMilvus.persistence.hostPath }}
+  {{- with .Values.VectorMilvus.persistence.nodeAffinity}}
+  nodeAffinity:
+    {{- toYaml . | nindent 4}}
+  {{- end }}
+  {{- end }}

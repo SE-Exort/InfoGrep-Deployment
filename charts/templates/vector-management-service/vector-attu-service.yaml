@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "infogrep.vectorAttu.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.VectorAttu.name "name" .Values.VectorAttu.name) | nindent 4 }}
+    {{- with .Values.VectorAttu.service.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.VectorAttu.service.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.VectorAttu.service.type }}
+  selector:
+    {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.VectorAttu.name) | nindent 4 }}
+  ports:
+    - name: {{ .Values.VectorAttu.service.servicePortHttpName }}
+      protocol: TCP
+      port: {{ .Values.VectorAttu.service.servicePortHttp }}
+      targetPort: {{ .Values.VectorAttu.containerPorts.attu }}
+      {{- if eq .Values.VectorAttu.service.type "NodePort" }}
+      nodePort: {{ .Values.VectorAttu.service.nodePortHttp }}
+      {{- end }}

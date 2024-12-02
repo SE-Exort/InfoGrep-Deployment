@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-attu-configs
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.VectorAttu.name "name" "vector-attu-configs") | nindent 4 }}
+data:
+  milvusHost: {{ template "infogrep.vectorMilvus.fullname" . }}
+  milvusFullHost: "{{ template "infogrep.vectorMilvus.fullname" . }}:{{ .Values.VectorMilvus.containerPorts.milvus }}"

@@ -109,3 +109,27 @@
     {{ default "default" .Values.VectorMinio.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "infogrep.vectorMilvus.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorMilvus.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "infogrep.vectorMilvus.serviceAccountName" -}}
+{{- if .Values.VectorMilvus.serviceAccount.create -}}
+    {{ default (include "infogrep.vectorMilvus.fullname" .) .Values.VectorMilvus.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.VectorMilvus.serviceAccount.name }}
+{{- end -}}
+{{- end -}}
+
+{{- define "infogrep.vectorAttu.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorAttu.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "infogrep.vectorAttu.serviceAccountName" -}}
+{{- if .Values.VectorAttu.serviceAccount.create -}}
+    {{ default (include "infogrep.vectorAttu.fullname" .) .Values.VectorAttu.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.VectorAttu.serviceAccount.name }}
+{{- end -}}
+{{- end -}}

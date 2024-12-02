@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "infogrep.vectorManagementService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.VectorManagementService.name "name" .Values.VectorManagementService.name) | nindent 4 }}
+    {{- with .Values.VectorManagementService.service.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.VectorManagementService.service.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.VectorManagementService.service.type }}
+  selector:
+    {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.VectorManagementService.name) | nindent 4 }}
+  ports:
+    - name: {{ .Values.VectorManagementService.service.servicePortHttpName }}
+      protocol: TCP
+      port: {{ .Values.VectorManagementService.service.servicePortHttp }}
+      targetPort: {{ .Values.VectorManagementService.containerPorts.server }}
+      {{- if eq .Values.VectorManagementService.service.type "NodePort" }}
+      nodePort: {{ .Values.VectorManagementService.service.nodePortHttp }}
+      {{- end }}
