@@ -416,7 +416,7 @@ VectorManagementService:
   image:
     repository: ghcr.io/se-exort/vector-management-service
     pullPolicy: IfNotPresent
-    tag: demo-5
+    tag: demo-6
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
