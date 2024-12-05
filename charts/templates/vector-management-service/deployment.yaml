@@ -34,6 +34,12 @@ spec:
                   name: vector-management-service-configs
                   key: milvusFullHost
                   optional: false
+            - name: OPENAI_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openai-secrets
+                  key: openaiKey
+                  optional: false
           image: "{{ .Values.VectorManagementService.image.repository }}:{{ .Values.VectorManagementService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.VectorManagementService.image.pullPolicy }}
           resources:
