@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ui-service-configs
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.UiService.name "name" "ui-service-configs") | nindent 4 }}
+data:
+  authServiceFullHost: "{{ template "infogrep.authService.fullname" . }}:{{ .Values.AuthService.service.servicePortHttp }}"
+  vectorServiceFullHost: "{{ template "infogrep.vectorManagementService.fullname" . }}:{{ .Values.VectorManagementService.service.servicePortHttp }}"

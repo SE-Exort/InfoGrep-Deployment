@@ -133,3 +133,15 @@
     {{ default "default" .Values.VectorAttu.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "infogrep.uiService.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.UiService.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "infogrep.uiService.serviceAccountName" -}}
+{{- if .Values.UiService.serviceAccount.create -}}
+    {{ default (include "infogrep.uiService.fullname" .) .Values.UiService.serviceAccount.name }}
+{{- else -}}
+    {{ default "default" .Values.UiService.serviceAccount.name }}
+{{- end -}}
+{{- end -}}

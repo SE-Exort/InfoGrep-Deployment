@@ -57,6 +57,7 @@ AiService:
     type: NodePort
     nodePortHttp: 30080
     servicePortHttp: 8004
+    targetPortHttp: 8004
     servicePortHttpName: ai-service-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -121,6 +122,7 @@ AuthService:
     type: NodePort
     nodePortHttp: 30081
     servicePortHttp: 4000
+    targetPortHttp: 4000
     servicePortHttpName: auth-service-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -188,6 +190,7 @@ AuthPostgres:
     type: NodePort
     nodePortHttp: 30082
     servicePortHttp: 5432
+    targetPortHttp: 5432
     servicePortHttpName: auth-postgres-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -257,6 +260,7 @@ VideoService:
     type: NodePort
     nodePortHttp: 30083
     servicePortHttp: 8879
+    targetPortHttp: 8879
     servicePortHttpName: video-service-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -304,6 +308,7 @@ ChatroomService:
     type: NodePort
     nodePortHttp: 30084
     servicePortHttp: 8003
+    targetPortHttp: 8003
     servicePortHttpName: chatroom-service-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -351,6 +356,7 @@ ParsingService:
     type: NodePort
     nodePortHttp: 30085
     servicePortHttp: 8001
+    targetPortHttp: 8001
     servicePortHttpName: parsing-service-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -398,6 +404,7 @@ FileManagementService:
     type: NodePort
     nodePortHttp: 30086
     servicePortHttp: 8002
+    targetPortHttp: 8002
     servicePortHttpName: file-management-service-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -448,6 +455,7 @@ VectorManagementService:
     type: NodePort
     nodePortHttp: 30087
     servicePortHttp: 8800
+    targetPortHttp: 8800
     servicePortHttpName: vector-management-service-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -510,6 +518,7 @@ VectorEtcd:
     type: NodePort
     nodePortHttp: 30088
     servicePortHttp: 2379
+    targetPortHttp: 2379
     servicePortHttpName: vector-etcd-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -587,6 +596,7 @@ VectorMinio:
     type: NodePort
     nodePortHttp: 30089
     servicePortHttp: 9000
+    targetPortHttp: 9000
     servicePortHttpName: vector-minio-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -672,6 +682,7 @@ VectorMilvus:
     type: NodePort
     nodePortHttp: 30090
     servicePortHttp: 19530
+    targetPortHttp: 19530
     servicePortHttpName: vector-milvus-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -768,6 +779,7 @@ VectorAttu:
     type: NodePort
     nodePortHttp: 30091
     servicePortHttp: 3000
+    targetPortHttp: 3000
     servicePortHttpName: vector-attu-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
@@ -792,3 +804,60 @@ VectorAttu:
               name: vector-attu-configs
               key: milvusHost
               optional: false
+
+# -- UI Service Config
+UiService:
+  name: ui-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/frontend
+    pullPolicy: IfNotPresent
+    tag: dev
+  # -- GHCR Image Pull Secret
+  imagePullSecrets:
+    - name: ghcr
+  # -- Frontend Env
+  env:
+    VITE_AUTH_SERVICE_URL: placeholder
+    VITE_VECTOR_SERVICE_URL: placeholder
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: ui-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 3000
+  # -- UI Service Container Startup Command
+  command: ["/bin/bash"]
+  args:
+    - -c
+    - npm run build && serve -s dist;
+  # -- Resource Limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: NodePort
+    nodePortHttp: 30092
+    servicePortHttp: 8088
+    targetPortHttp: 3000
+    servicePortHttpName: ui-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None

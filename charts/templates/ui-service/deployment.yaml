@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "infogrep.uiService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.UiService.name "name" .Values.UiService.name) | nindent 4 }}
+spec:
+  {{- if .Values.UiService.replicaCount }}
+  replicas: {{ .Values.UiService.replicaCount }}
+  {{- else }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.UiService.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.UiService.name "name" .Values.UiService.name) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "infogrep.uiService.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.UiService.serviceAccount.automountServiceAccountToken }}
+    {{- with .Values.UiService.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Values.UiService.name }}
+          env:
+            - name: VITE_AUTH_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ui-service-configs
+                  key: authServiceFullHost
+                  optional: false
+            - name: VITE_VECTOR_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: ui-service-configs
+                  key: vectorServiceFullHost
+                  optional: false
+          image: "{{ .Values.UiService.image.repository }}:{{ .Values.UiService.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.UiService.image.pullPolicy }}
+          workingDir: /home/node/app
+          resources:
+            {{- toYaml .Values.UiService.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.UiService.containerPorts.server }}
+          command: {{ .Values.UiService.command }}
+          args:
+            {{- toYaml .Values.UiService.args | nindent 12}}

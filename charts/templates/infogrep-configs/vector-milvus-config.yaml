@@ -8,5 +8,5 @@ metadata:
 data:
   etcdHost: {{ template "infogrep.vectorEtcd.fullname" . }}
   minioHost: {{ template "infogrep.vectorMinio.fullname" . }}
-  etcdFullHost: "{{ template "infogrep.vectorEtcd.fullname" . }}:{{ .Values.VectorEtcd.containerPorts.etcd }}"
-  minioFullHost: "{{ template "infogrep.vectorMinio.fullname" . }}:{{ .Values.VectorMinio.containerPorts.minio }}"
+  etcdFullHost: "{{ template "infogrep.vectorEtcd.fullname" . }}:{{ .Values.VectorEtcd.service.servicePortHttp }}"
+  minioFullHost: "{{ template "infogrep.vectorMinio.fullname" . }}:{{ .Values.VectorMinio.service.servicePortHttp }}"

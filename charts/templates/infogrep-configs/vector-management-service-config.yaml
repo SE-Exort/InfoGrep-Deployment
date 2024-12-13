@@ -7,4 +7,4 @@ metadata:
     {{- include "infogrep.labels" (dict "context" . "component" .Values.VectorManagementService.name "name" "vector-management-service-configs") | nindent 4 }}
 data:
   milvusHost: {{ template "infogrep.vectorMilvus.fullname" . }}
-  milvusFullHost: "{{ template "infogrep.vectorMilvus.fullname" . }}:{{ .Values.VectorMilvus.containerPorts.milvus }}"
+  milvusFullHost: "{{ template "infogrep.vectorMilvus.fullname" . }}:{{ .Values.VectorMilvus.service.servicePortHttp }}"
