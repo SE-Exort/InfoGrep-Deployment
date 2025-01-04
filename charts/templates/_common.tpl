@@ -39,6 +39,7 @@ helm.sh/chart: {{ include "infogrep.chart" .context }}
 {{ include "infogrep.selectorLabels" (dict "context" .context "component" .component "name" .name) }}
 app.kubernetes.io/managed-by: {{ .context.Release.Service }}
 app.kubernetes.io/part-of: infogrep
+istio-injection: enabled
 {{- end }}
 
 {{/*
