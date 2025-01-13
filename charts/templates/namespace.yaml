@@ -4,3 +4,4 @@ metadata:
   name: {{ .Values.namespace }}
   labels:
     {{- include "infogrep.labels" (dict "context" . "component" "infogrep-namespace" "name" "namespace") | nindent 4 }}
+    istio-injection: enabled
