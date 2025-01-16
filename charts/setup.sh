@@ -38,6 +38,7 @@ helm repo update
 # installing istio
 helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
 helm install istiod istio/istiod -n istio-system --wait
+kubectl apply -f "./monitoring/mtls.yaml"
 
 # installing Jaegar
 kubectl apply -f "./monitoring/jaegar.yaml"
