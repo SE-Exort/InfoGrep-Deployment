@@ -4,13 +4,13 @@ Helm Charts for deploying InfoGrep
 
 ## Steps (Local Minikube)
 
-1. [Install Docker](https://docker.com), [Install Helm](https://helm.sh/docs/intro/install/), [Install Minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Farm64%2Fstable%2Fbinary+download)
+1. [Install Docker](https://docker.com), [Install Helm](https://helm.sh/docs/intro/install/), [Install Minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Farm64%2Fstable%2Fbinary+download), [Install Istioctl and add the CLI to PATH](https://istio.io/latest/docs/setup/additional-setup/download-istio-release/)
 2. For Mac users on Apple Silicon Chips, make sure rosetta is installed, run a `sudo softwareupdate --install-rosetta` if not, Select Docker VMM for Virtual Machine Options in Docker Desktop under Settings -> General.
 3. `minikube start` to start your k8s cluster.
 4. get your OpenAI api key and set it with `export OPENAI_KEY=<Your Key>`
 5. (optional) get a SerpAPI key and set it with `export SERPAPI_KEY=<Your Key>`. If you don't want to, just remove the `--set KeyConfig.serpapiKey` part from the helm install command.
 6. set your GHCR env variables with `export GHCR_USER=<Your-GitHub-Username>`, `export GHCR_PASSWORD=<Your-GitHub-Token>`, `export GHCR_EMAIL=<Your-GitHub-Email>`.
-7. `cd charts` and run `bash setup/setup.sh` to install the k8s charts, the cluster should be ready in ~10 min.
+7. `cd charts` and run `bash setup.sh` to install the k8s charts, the cluster should be ready in ~10 min.
 
 ## Deprecated
 
