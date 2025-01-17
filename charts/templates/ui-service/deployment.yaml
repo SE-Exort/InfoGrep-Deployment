@@ -40,6 +40,9 @@ spec:
                   name: ui-service-configs
                   key: vectorServiceFullHost
                   optional: false
+          {{- with .Values.DefaultEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.UiService.image.repository }}:{{ .Values.UiService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.UiService.image.pullPolicy }}
           workingDir: /home/node/app

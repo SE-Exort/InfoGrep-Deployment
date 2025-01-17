@@ -27,6 +27,10 @@ spec:
     {{- end }}
       containers:
         - name: {{ .Values.ChatroomService.name }}
+          env:
+          {{- with .Values.DefaultEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.ChatroomService.image.repository }}:{{ .Values.ChatroomService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.ChatroomService.image.pullPolicy }}
           resources:

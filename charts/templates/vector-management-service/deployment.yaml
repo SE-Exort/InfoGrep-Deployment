@@ -40,6 +40,9 @@ spec:
                   name: openai-secrets
                   key: openaiKey
                   optional: false
+          {{- with .Values.DefaultEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.VectorManagementService.image.repository }}:{{ .Values.VectorManagementService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.VectorManagementService.image.pullPolicy }}
           resources:

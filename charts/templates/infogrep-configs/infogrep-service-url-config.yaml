@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: infogrep-service-url-config
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.namespace "name" "infogrep-service-url-config") | nindent 4 }}
+data:
+  aiServiceHost: "{{ template "infogrep.aiService.fullname" . }}:{{ .Values.AiService.service.servicePortHttp }}"
+  authServiceHost: "{{ template "infogrep.authService.fullname" . }}:{{ .Values.AuthService.service.servicePortHttp }}"
+  videoServiceHost: "{{ template "infogrep.videoService.fullname" . }}:{{ .Values.VideoService.service.servicePortHttp }}"
+  chatroomServiceHost: "{{ template "infogrep.chatroomService.fullname" . }}:{{ .Values.ChatroomService.service.servicePortHttp }}"
+  parsingServiceHost: "{{ template "infogrep.parsingService.fullname" . }}:{{ .Values.ParsingService.service.servicePortHttp }}"
+  fileManagementServiceHost: "{{ template "infogrep.fileManagementService.fullname" . }}:{{ .Values.FileManagementService.service.servicePortHttp }}"
+  vectorManagementServiceHost: "{{ template "infogrep.vectorManagementService.fullname" . }}:{{ .Values.VectorManagementService.service.servicePortHttp }}"
+  uiServiceHost: "{{ template "infogrep.uiService.fullname" . }}:{{ .Values.UiService.service.servicePortHttp }}"

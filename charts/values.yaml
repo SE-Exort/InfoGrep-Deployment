@@ -18,7 +18,56 @@ domain: local.infogrep.ai
 KeyConfig:
   openaiKey: ""
   serpapiKey: ""
-
+# -- Default Env for All Service Pods
+DefaultEnv:
+  - name: AI_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: infogrep-service-url-config
+        key: aiServiceHost
+        optional: false
+  - name: AUTH_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: infogrep-service-url-config
+        key: authServiceHost
+        optional: false
+  - name: VIDEO_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: infogrep-service-url-config
+        key: videoServiceHost
+        optional: false
+  - name: CHATROOM_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: infogrep-service-url-config
+        key: chatroomServiceHost
+        optional: false
+  - name: PARSING_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: infogrep-service-url-config
+        key: parsingServiceHost
+        optional: false
+  - name: FILE_MANAGEMENT_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: infogrep-service-url-config
+        key: fileManagementServiceHost
+        optional: false
+  - name: VECTOR_MANAGEMENT_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: infogrep-service-url-config
+        key: vectorManagementServiceHost
+        optional: false
+  - name: UI_SERVICE_HOST
+    valueFrom:
+      configMapKeyRef:
+        name: infogrep-service-url-config
+        key: uiServiceHost
+        optional: false
 # -- Ai Service Config
 AiService:
   name: ai-service

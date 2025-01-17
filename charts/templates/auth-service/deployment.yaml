@@ -46,6 +46,9 @@ spec:
                   name: auth-service-pg-configs
                   key: pgHost
                   optional: false
+          {{- with .Values.DefaultEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.AuthService.image.repository }}:{{ .Values.AuthService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.AuthService.image.pullPolicy }}
           resources:

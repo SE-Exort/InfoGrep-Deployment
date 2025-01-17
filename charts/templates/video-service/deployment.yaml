@@ -40,6 +40,9 @@ spec:
                   name: serpapi-secret
                   key: serpapiKey
                   optional: false
+          {{- with .Values.DefaultEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.VideoService.image.repository }}:{{ .Values.VideoService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.VideoService.image.pullPolicy }}
           resources:

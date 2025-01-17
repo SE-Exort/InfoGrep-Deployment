@@ -27,6 +27,10 @@ spec:
     {{- end }}
       containers:
         - name: {{ .Values.AiService.name }}
+          env:
+          {{- with .Values.DefaultEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.AiService.image.repository }}:{{ .Values.AiService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.AiService.image.pullPolicy }}
           resources:

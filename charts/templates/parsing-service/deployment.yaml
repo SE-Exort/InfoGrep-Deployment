@@ -27,6 +27,10 @@ spec:
     {{- end }}
       containers:
         - name: {{ .Values.ParsingService.name }}
+          env:
+          {{- with .Values.DefaultEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.ParsingService.image.repository }}:{{ .Values.ParsingService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.ParsingService.image.pullPolicy }}
           resources:
