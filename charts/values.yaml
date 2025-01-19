@@ -160,10 +160,10 @@ AuthService:
   resources:
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 512Mi
     requests:
       cpu: 500m
-      memory: 512Mi
+      memory: 128Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -298,10 +298,10 @@ VideoService:
   resources:
     limits:
       cpu: 1.0
-      memory: 1Gi
+      memory: 512Mi
     requests:
       cpu: 1.0
-      memory: 512Mi
+      memory: 256Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -346,10 +346,10 @@ ChatroomService:
   resources:
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 512Mi
     requests:
       cpu: 500m
-      memory: 512Mi
+      memory: 128Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -394,10 +394,10 @@ ParsingService:
   resources:
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 512Mi
     requests:
       cpu: 500m
-      memory: 512Mi
+      memory: 128Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -442,10 +442,10 @@ FileManagementService:
   resources:
     limits:
       cpu: 500m
-      memory: 1Gi
+      memory: 512Mi
     requests:
       cpu: 500m
-      memory: 512Mi
+      memory: 128Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -496,7 +496,7 @@ VectorManagementService:
       memory: 1Gi
     requests:
       cpu: 500m
-      memory: 512Mi
+      memory: 1Gi
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -817,10 +817,10 @@ VectorAttu:
   resources:
     limits:
       cpu: 0.5
-      memory: 1Gi
+      memory: 512Mi
     requests:
       cpu: 0.5
-      memory: 1Gi
+      memory: 512Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -854,7 +854,7 @@ VectorAttu:
               key: milvusHost
               optional: false
 
-# -- UI Service Config
+# -- UI Service Config (Not used)
 UiService:
   name: ui-service
   # -- Default namespace
