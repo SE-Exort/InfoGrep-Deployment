@@ -142,7 +142,7 @@ AuthService:
   image:
     repository: ghcr.io/se-exort/auth-service
     pullPolicy: IfNotPresent
-    tag: dev
+    tag: latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
