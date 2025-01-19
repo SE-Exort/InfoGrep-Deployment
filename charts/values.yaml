@@ -298,10 +298,10 @@ VideoService:
   resources:
     limits:
       cpu: 1.0
-      memory: 512Mi
+      memory: 1Gi
     requests:
       cpu: 1.0
-      memory: 256Mi
+      memory: 512Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
