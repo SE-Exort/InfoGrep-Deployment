@@ -74,18 +74,6 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "infogrep.vectorManagementService.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorManagementService.name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "infogrep.vectorManagementService.serviceAccountName" -}}
-{{- if .Values.VectorManagementService.serviceAccount.create -}}
-    {{ default (include "infogrep.vectorManagementService.fullname" .) .Values.VectorManagementService.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.VectorManagementService.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
-
 {{- define "infogrep.vectorEtcd.fullname" -}}
 {{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorEtcd.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
@@ -131,17 +119,5 @@
     {{ default (include "infogrep.vectorAttu.fullname" .) .Values.VectorAttu.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.VectorAttu.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
-
-{{- define "infogrep.uiService.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.UiService.name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "infogrep.uiService.serviceAccountName" -}}
-{{- if .Values.UiService.serviceAccount.create -}}
-    {{ default (include "infogrep.uiService.fullname" .) .Values.UiService.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.UiService.serviceAccount.name }}
 {{- end -}}
 {{- end -}}

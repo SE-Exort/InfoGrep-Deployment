@@ -56,18 +56,13 @@ DefaultEnv:
         name: infogrep-service-url-config
         key: fileManagementServiceHost
         optional: false
-  - name: VECTOR_MANAGEMENT_SERVICE_HOST
+  - name: MILVUS_SERVICE_HOST
     valueFrom:
       configMapKeyRef:
         name: infogrep-service-url-config
-        key: vectorManagementServiceHost
+        key: milvusServiceHost
         optional: false
-  - name: UI_SERVICE_HOST
-    valueFrom:
-      configMapKeyRef:
-        name: infogrep-service-url-config
-        key: uiServiceHost
-        optional: false
+
 # -- Ai Service Config
 AiService:
   name: ai-service
@@ -463,73 +458,6 @@ FileManagementService:
     externalTrafficPolicy: Cluster
     sessionAffinity: None
 
-# -- Vector Management Service Config
-VectorManagementService:
-  name: vector-management-service
-  # -- Default namespace
-  namespace: ""
-  # -- GHCR Config
-  image:
-    repository: ghcr.io/se-exort/vector-management-service
-    pullPolicy: IfNotPresent
-    tag: demo-6
-  # -- GHCR Image Pull Secret
-  imagePullSecrets:
-    - name: ghcr
-  # -- Vector Management Service Env
-  env:
-    MILVUS_HOST: placeholder_milvusservice
-  # -- Service Account
-  serviceAccount:
-    create: true
-    name: vector-management-service-account
-    annotations: {}
-    labels: {}
-    automountServiceAccountToken: true
-  # -- Container Ports
-  containerPorts:
-    server: 8800
-  # -- Resource Limits
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 1Gi
-  # -- K8s Service Configuration
-  service:
-    annotations: {}
-    labels: {}
-    type: NodePort
-    nodePortHttp: 30087
-    servicePortHttp: 8800
-    targetPortHttp: 8800
-    servicePortHttpName: vector-management-service-port
-    servicePortHttpsAppProtocol: ""
-    loadBalancerClass: ""
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    externalIPs: []
-    externalTrafficPolicy: Cluster
-    sessionAffinity: None
-  # -- Vector Management Init Containers
-  initContainers:
-    - name: wait-for-milvus
-      image: busybox
-      command: ["/bin/sh", "-c"]
-      args:
-        [
-          "until echo 'Waiting for vector milvus...' && nc -vz -w 2 $MILVUS_HOST 19530; do echo 'Looping forever...'; sleep 2; done;",
-        ]
-      env:
-        - name: MILVUS_HOST
-          valueFrom:
-            configMapKeyRef:
-              name: vector-management-service-configs
-              key: milvusHost
-              optional: false
-
 # -- Vector Management etcd Config
 VectorEtcd:
   # -- Vector etcd Name
@@ -853,60 +781,3 @@ VectorAttu:
               name: vector-attu-configs
               key: milvusHost
               optional: false
-
-# -- UI Service Config (Not used)
-UiService:
-  name: ui-service
-  # -- Default namespace
-  namespace: ""
-  # -- GHCR Config
-  image:
-    repository: ghcr.io/se-exort/frontend
-    pullPolicy: IfNotPresent
-    tag: dev
-  # -- GHCR Image Pull Secret
-  imagePullSecrets:
-    - name: ghcr
-  # -- Frontend Env
-  env:
-    VITE_AUTH_SERVICE_URL: placeholder
-    VITE_VECTOR_SERVICE_URL: placeholder
-  # -- Service Account
-  serviceAccount:
-    create: true
-    name: ui-service-account
-    annotations: {}
-    labels: {}
-    automountServiceAccountToken: true
-  # -- Container Ports
-  containerPorts:
-    server: 3000
-  # -- UI Service Container Startup Command
-  command: ["/bin/bash"]
-  args:
-    - -c
-    - npm run build && serve -s dist;
-  # -- Resource Limits
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-  # -- K8s Service Configuration
-  service:
-    annotations: {}
-    labels: {}
-    type: NodePort
-    nodePortHttp: 30092
-    servicePortHttp: 8088
-    targetPortHttp: 3000
-    servicePortHttpName: ui-service-port
-    servicePortHttpsAppProtocol: ""
-    loadBalancerClass: ""
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    externalIPs: []
-    externalTrafficPolicy: Cluster
-    sessionAffinity: None
