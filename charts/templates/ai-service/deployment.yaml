@@ -37,3 +37,10 @@ spec:
             {{- toYaml .Values.AiService.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.AiService.containerPorts.server }}
+        - name: "{{ .Values.AiService.name }}-ollama"
+          image: "{{ .Values.AiService.ollamaImage.repository}}:{{ .Values.AiService.ollamaImage.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.AiService.ollamaImage.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.AiService.ollamaImage.ports }}
+          resources:
+            {{- toYaml .Values.AiService.ollamaImage.resources | nindent 12 }}

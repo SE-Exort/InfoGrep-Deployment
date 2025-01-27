@@ -127,6 +127,19 @@ AiService:
     extraPaths: []
     extraRules: []
     extraTls: []
+  # -- Ollama Container Configuration
+  ollamaImage:
+    repository: ollama/ollama
+    pullPolicy: Always
+    tag: latest
+    ports: 11434
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1Gi
+      requests:
+        cpu: 500m
+        memory: 512Mi
 
 # -- Authentication Service Config
 AuthService:
