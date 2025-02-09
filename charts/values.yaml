@@ -15,9 +15,11 @@ apiVersionOverrides: {}
 replicaCount: 1
 namespace: infogrep
 domain: local.infogrep.ai
+
 KeyConfig:
   openaiKey: ""
   serpapiKey: ""
+
 # -- Default Env for All Service Pods
 DefaultEnv:
   - name: AI_SERVICE_HOST
@@ -32,23 +34,11 @@ DefaultEnv:
         name: infogrep-service-url-config
         key: authServiceHost
         optional: false
-  - name: VIDEO_SERVICE_HOST
-    valueFrom:
-      configMapKeyRef:
-        name: infogrep-service-url-config
-        key: videoServiceHost
-        optional: false
   - name: CHATROOM_SERVICE_HOST
     valueFrom:
       configMapKeyRef:
         name: infogrep-service-url-config
         key: chatroomServiceHost
-        optional: false
-  - name: PARSING_SERVICE_HOST
-    valueFrom:
-      configMapKeyRef:
-        name: infogrep-service-url-config
-        key: parsingServiceHost
         optional: false
   - name: FILE_MANAGEMENT_SERVICE_HOST
     valueFrom:
@@ -63,6 +53,26 @@ DefaultEnv:
         key: milvusServiceHost
         optional: false
 
+# -- Default Postgres Env
+PostgresEnv:
+  - name: POSTGRES_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: infogrep-pg-creds
+        key: password
+        optional: false
+  - name: POSTGRES_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: infogrep-pg-creds
+        key: username
+        optional: false
+  - name: PGHOST
+    valueFrom:
+      configMapKeyRef:
+        name: infogrep-pg-configs
+        key: pgHost
+        optional: false
 # -- Ai Service Config
 AiService:
   name: ai-service
@@ -201,14 +211,14 @@ AuthService:
         - name: PGHOST
           valueFrom:
             configMapKeyRef:
-              name: auth-service-pg-configs
+              name: infogrep-pg-configs
               key: pgHost
               optional: false
 
-# -- Auth Service Postgres Config
-AuthPostgres:
-  # -- Auth Postgress Name
-  name: auth-postgres
+# -- Infogrep Postgres Config
+InfogrepPostgres:
+  # -- Infogrep Postgress Name
+  name: infogrep-postgres
   replicaCount: 1
   # -- Default Docker Hub Postgres Image
   image:
@@ -248,7 +258,7 @@ AuthPostgres:
     nodePortHttp: 30082
     servicePortHttp: 5432
     targetPortHttp: 5432
-    servicePortHttpName: auth-postgres-port
+    servicePortHttpName: infogrep-postgres-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
     loadBalancerIP: ""
@@ -262,8 +272,8 @@ AuthPostgres:
     password: example
   # -- PVC Config
   persistence:
-    claimName: auth-postgres-pv-claim
-    volumeName: auth-postgres-pv
+    claimName: infogrep-postgres-pv-claim
+    volumeName: infogrep-postgres-pv
     mountPath: "/var/lib/postgresql/data"
     hostPath: "/data"
     storageClass: local-storage
@@ -278,54 +288,6 @@ AuthPostgres:
                 operator: In
                 values:
                   - minikube
-
-# -- Video Service Config
-VideoService:
-  name: video-service
-  # -- Default namespace
-  namespace: ""
-  # -- GHCR Config
-  image:
-    repository: ghcr.io/se-exort/video-service
-    pullPolicy: IfNotPresent
-    tag: dev
-  # -- GHCR Image Pull Secret
-  imagePullSecrets:
-    - name: ghcr
-  # -- Service Account
-  serviceAccount:
-    create: true
-    name: video-service-account
-    annotations: {}
-    labels: {}
-    automountServiceAccountToken: true
-  # -- Container Ports
-  containerPorts:
-    server: 8879
-  # -- Resource Limits
-  resources:
-    limits:
-      cpu: 1.0
-      memory: 1Gi
-    requests:
-      cpu: 1.0
-      memory: 512Mi
-  # -- K8s Service Configuration
-  service:
-    annotations: {}
-    labels: {}
-    type: NodePort
-    nodePortHttp: 30083
-    servicePortHttp: 8879
-    targetPortHttp: 8879
-    servicePortHttpName: video-service-port
-    servicePortHttpsAppProtocol: ""
-    loadBalancerClass: ""
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    externalIPs: []
-    externalTrafficPolicy: Cluster
-    sessionAffinity: None
 
 # -- Chatroom Service Config
 ChatroomService:
@@ -367,54 +329,6 @@ ChatroomService:
     servicePortHttp: 8003
     targetPortHttp: 8003
     servicePortHttpName: chatroom-service-port
-    servicePortHttpsAppProtocol: ""
-    loadBalancerClass: ""
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    externalIPs: []
-    externalTrafficPolicy: Cluster
-    sessionAffinity: None
-
-# -- Parsing Service Config
-ParsingService:
-  name: parsing-service
-  # -- Default namespace
-  namespace: ""
-  # -- GHCR Config
-  image:
-    repository: ghcr.io/se-exort/parsing-service
-    pullPolicy: IfNotPresent
-    tag: latest
-  # -- GHCR Image Pull Secret
-  imagePullSecrets:
-    - name: ghcr
-  # -- Service Account
-  serviceAccount:
-    create: true
-    name: parsing-service-account
-    annotations: {}
-    labels: {}
-    automountServiceAccountToken: true
-  # -- Container Ports
-  containerPorts:
-    server: 8001
-  # -- Resource Limits
-  resources:
-    limits:
-      cpu: 500m
-      memory: 512Mi
-    requests:
-      cpu: 500m
-      memory: 128Mi
-  # -- K8s Service Configuration
-  service:
-    annotations: {}
-    labels: {}
-    type: NodePort
-    nodePortHttp: 30085
-    servicePortHttp: 8001
-    targetPortHttp: 8001
-    servicePortHttpName: parsing-service-port
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
     loadBalancerIP: ""

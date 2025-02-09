@@ -28,6 +28,9 @@ spec:
       containers:
         - name: {{ .Values.ChatroomService.name }}
           env:
+          {{- with .Values.PostgresEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           {{- with .Values.DefaultEnv }}
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}

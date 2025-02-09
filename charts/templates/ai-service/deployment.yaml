@@ -31,6 +31,12 @@ spec:
           {{- with .Values.DefaultEnv }}
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
+            - name: OPENAI_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: openai-secrets
+                  key: openaiKey
+                  optional: true
           image: "{{ .Values.AiService.image.repository }}:{{ .Values.AiService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.AiService.image.pullPolicy }}
           resources:

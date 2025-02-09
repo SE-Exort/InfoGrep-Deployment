@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ template "infogrep.infogrepPostgres.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.InfogrepPostgres.name "name" .Values.InfogrepPostgres.name) | nindent 4 }}
+spec:
+  {{- if .Values.InfogrepPostgres.replicaCount }}
+  replicas: {{ .Values.InfogrepPostgres.replicaCount }}
+  {{- else }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.InfogrepPostgres.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.InfogrepPostgres.name "name" .Values.InfogrepPostgres.name) | nindent 8 }}
+    spec:
+      containers:
+        - name: "{{ .Values.InfogrepPostgres.name }}"
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: infogrep-pg-creds
+                  key: password
+                  optional: false
+            - name: POSTGRES_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: infogrep-pg-creds
+                  key: username
+                  optional: false
+          image: "{{ .Values.InfogrepPostgres.image.repository }}:{{ .Values.InfogrepPostgres.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.InfogrepPostgres.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.InfogrepPostgres.resources | nindent 12 }}
+          readinessProbe:
+            exec:
+              command:
+                {{- range .Values.InfogrepPostgres.readinessProbe.command }}
+                - {{ . }}
+                {{- end }}
+            initialDelaySeconds: {{ .Values.InfogrepPostgres.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.InfogrepPostgres.readinessProbe.periodSeconds }}
+            timeoutSeconds: {{ .Values.InfogrepPostgres.readinessProbe.timeoutSeconds }}
+            successThreshold: {{ .Values.InfogrepPostgres.readinessProbe.successThreshold }}
+            failureThreshold: {{ .Values.InfogrepPostgres.readinessProbe.failureThreshold }}
+          ports:
+            - containerPort: {{ .Values.InfogrepPostgres.containerPorts.postgres }}
+          volumeMounts:
+            - mountPath: {{ .Values.InfogrepPostgres.persistence.mountPath }}
+              name: {{ .Values.InfogrepPostgres.persistence.volumeName }}
+      volumes:
+        - name: {{ .Values.InfogrepPostgres.persistence.volumeName }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.InfogrepPostgres.persistence.claimName }}

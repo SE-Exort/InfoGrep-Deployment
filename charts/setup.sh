@@ -16,6 +16,20 @@ function check_envvar {
         echo "$param1 is set."
     fi
 }
+ENV_FILE=".env"
+
+# Check if the .env file exists
+if [[ ! -f "$ENV_FILE" ]]; then
+  echo "The env file $ENV_FILE does not exist, please create it with the appropriate value from the .env.template"
+  exit 1
+fi
+
+# Source the .env file to export the variables
+set -a # Automatically export all variables
+source "$ENV_FILE"
+set +a
+
+echo "Environment variables loaded from $ENV_FILE."
 
 # check required env var
 check_envvar OPENAI_KEY required

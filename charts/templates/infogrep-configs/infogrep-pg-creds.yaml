@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Secret
 metadata:
-  name: auth-service-pg-creds
+  name: infogrep-pg-creds
   namespace: {{ .Values.namespace }}
   labels:
     {{- include "infogrep.labels" (dict "context" $) | nindent 4 }}
 type: Opaque
 data:
-  {{- with .Values.AuthPostgres.env.username }}
+  {{- with .Values.InfogrepPostgres.env.username }}
   username: {{ . | b64enc }}
   {{- end }}
-  {{- with .Values.AuthPostgres.env.password }}
+  {{- with .Values.InfogrepPostgres.env.password }}
   password: {{ . | b64enc }}
   {{- end }}

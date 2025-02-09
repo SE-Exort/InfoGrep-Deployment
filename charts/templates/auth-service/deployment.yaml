@@ -28,24 +28,9 @@ spec:
       containers:
         - name: {{ .Values.AuthService.name }}
           env:
-            - name: POSTGRES_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: auth-service-pg-creds
-                  key: password
-                  optional: false
-            - name: POSTGRES_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: auth-service-pg-creds
-                  key: username
-                  optional: false
-            - name: PGHOST
-              valueFrom:
-                configMapKeyRef:
-                  name: auth-service-pg-configs
-                  key: pgHost
-                  optional: false
+          {{- with .Values.PostgresEnv }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           {{- with .Values.DefaultEnv }}
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}

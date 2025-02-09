@@ -1,9 +1,0 @@
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: auth-service-pg-configs
-  namespace: {{ .Values.namespace }}
-  labels:
-    {{- include "infogrep.labels" (dict "context" . "component" .Values.AuthPostgres.name "name" "auth-service-pg-configs") | nindent 4 }}
-data:
-  pgHost: {{ template "infogrep.authPostgres.fullname" . }}

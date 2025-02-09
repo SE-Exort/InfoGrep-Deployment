@@ -22,20 +22,8 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "infogrep.authPostgres.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.AuthPostgres.name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "infogrep.videoService.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VideoService.name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "infogrep.videoService.serviceAccountName" -}}
-{{- if .Values.VideoService.serviceAccount.create -}}
-    {{ default (include "infogrep.videoService.fullname" .) .Values.VideoService.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.VideoService.serviceAccount.name }}
-{{- end -}}
+{{- define "infogrep.infogrepPostgres.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.InfogrepPostgres.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "infogrep.chatroomService.fullname" -}}
@@ -47,18 +35,6 @@
     {{ default (include "infogrep.chatroomService.fullname" .) .Values.ChatroomService.serviceAccount.name }}
 {{- else -}}
     {{ default "default" .Values.ChatroomService.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
-
-{{- define "infogrep.parsingService.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.ParsingService.name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "infogrep.parsingService.serviceAccountName" -}}
-{{- if .Values.ParsingService.serviceAccount.create -}}
-    {{ default (include "infogrep.parsingService.fullname" .) .Values.ParsingService.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.ParsingService.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
 

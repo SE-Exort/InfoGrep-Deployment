@@ -8,9 +8,7 @@ metadata:
 data:
   aiServiceHost: "{{ template "infogrep.aiService.fullname" . }}:{{ .Values.AiService.service.servicePortHttp }}"
   authServiceHost: "{{ template "infogrep.authService.fullname" . }}:{{ .Values.AuthService.service.servicePortHttp }}"
-  videoServiceHost: "{{ template "infogrep.videoService.fullname" . }}:{{ .Values.VideoService.service.servicePortHttp }}"
   chatroomServiceHost: "{{ template "infogrep.chatroomService.fullname" . }}:{{ .Values.ChatroomService.service.servicePortHttp }}"
-  parsingServiceHost: "{{ template "infogrep.parsingService.fullname" . }}:{{ .Values.ParsingService.service.servicePortHttp }}"
   fileManagementServiceHost: "{{ template "infogrep.fileManagementService.fullname" . }}:{{ .Values.FileManagementService.service.servicePortHttp }}"
   milvusServiceHost: "{{ template "infogrep.vectorMilvus.fullname" . }}:{{ .Values.VectorMilvus.service.servicePortHttp }}"
   
