@@ -686,7 +686,7 @@ VectorAttu:
     labels: {}
     type: LoadBalancer
     nodePortHttp: 30091
-    servicePortHttp: 3000
+    servicePortHttp: 3008
     targetPortHttp: 3000
     servicePortHttpName: vector-attu-port
     servicePortHttpsAppProtocol: ""

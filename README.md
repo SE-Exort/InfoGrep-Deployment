@@ -22,5 +22,17 @@ Helm Charts for deploying InfoGrep
 
 ### Testing
 
-- For example, for testing the AI Service, run `minikube service infogrep-ai-service -n infogrep --url`, the output will contain the tunneled endpoint.
-- For a list of service, run `kubectl get svc -n infogrep`.
+- Run `minikube tunnel --cleanup` to tunnel all the services out to `127.0.0.1`. You might need to input your password.
+- For a full list of service, run `kubectl get svc -n infogrep`, any service with an external IP will be accessible.
+- For example, to access the auth service, simply `curl http://127.0.0.1:4000`.
+
+### Integrations
+
+- For observability dashboards, run:
+  - `istioctl dashboard grafana` for Grafana,
+  - `istioctl dashboard jaeger` for distributed tracing,
+  - `istioctl dashboard kiali` for traffic graphs.
+- For logging, access the kibana dashboard at `https://127.0.0.1:5601`
+  - the user is just the default user `elastic`
+  - you can obtain the password with the following command `kubectl get secret infogrep-elasticsearch-es-elastic-user -n infogrep -o go-template='{{.data.elastic | base64decode}}'`.
+- For the milvus dashboard, access the attu dashboard at `http://127.0.0.1:3008`.
