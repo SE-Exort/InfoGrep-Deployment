@@ -111,3 +111,11 @@
       {{- tpl (toYaml .) $ | nindent 6 }}
   {{- end }}
   {{- end -}}
+
+{{- define "infogrep.elasticsearchService.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) "elasticsearch" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "infogrep.kibanaService.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) "kibana" | trunc 63 | trimSuffix "-" -}}
+{{- end -}}

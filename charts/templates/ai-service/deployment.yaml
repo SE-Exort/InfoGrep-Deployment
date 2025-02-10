@@ -31,6 +31,9 @@ spec:
           {{- with .Values.DefaultEnv }}
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
+          {{- with .Values.ElasticsearchConfig }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
             - name: OPENAI_KEY
               valueFrom:
                 secretKeyRef:

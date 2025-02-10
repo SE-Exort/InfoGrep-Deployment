@@ -76,6 +76,17 @@ PostgresEnv:
   - name: PGPORT
     value: "5432"
 
+# -- Elasticsearch Config
+ElasticsearchConfig:
+  - name: ES_SERVICE_HOST
+    value: "infogrep-elasticsearch-es-http"
+  - name: ES_SERVICE_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: infogrep-elasticsearch-es-elastic-user
+        key: elastic
+        optional: false
+
 # -- Ai Service Config
 AiService:
   name: ai-service
@@ -111,7 +122,7 @@ AiService:
   service:
     annotations: {}
     labels: {}
-    type: NodePort
+    type: LoadBalancer
     nodePortHttp: 30080
     servicePortHttp: 8004
     targetPortHttp: 8004
@@ -195,7 +206,7 @@ AuthService:
   service:
     annotations: {}
     labels: {}
-    type: NodePort
+    type: LoadBalancer
     nodePortHttp: 30081
     servicePortHttp: 4000
     targetPortHttp: 4000
@@ -247,11 +258,11 @@ InfogrepPostgres:
   service:
     annotations: {}
     labels: {}
-    type: NodePort
+    type: ClusterIP
     nodePortHttp: 30082
     servicePortHttp: 5432
     targetPortHttp: 5432
-    servicePortHttpName: infogrep-postgres-port
+    servicePortHttpName: database
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
     loadBalancerIP: ""
@@ -317,7 +328,7 @@ ChatroomService:
   service:
     annotations: {}
     labels: {}
-    type: NodePort
+    type: LoadBalancer
     nodePortHttp: 30084
     servicePortHttp: 8003
     targetPortHttp: 8003
@@ -365,7 +376,7 @@ FileManagementService:
   service:
     annotations: {}
     labels: {}
-    type: NodePort
+    type: LoadBalancer
     nodePortHttp: 30086
     servicePortHttp: 8002
     targetPortHttp: 8002
@@ -412,7 +423,7 @@ VectorEtcd:
   service:
     annotations: {}
     labels: {}
-    type: NodePort
+    type: ClusterIP
     nodePortHttp: 30088
     servicePortHttp: 2379
     targetPortHttp: 2379
@@ -490,7 +501,7 @@ VectorMinio:
   service:
     annotations: {}
     labels: {}
-    type: NodePort
+    type: ClusterIP
     nodePortHttp: 30089
     servicePortHttp: 9000
     targetPortHttp: 9000
@@ -576,7 +587,7 @@ VectorMilvus:
   service:
     annotations: {}
     labels: {}
-    type: NodePort
+    type: ClusterIP
     nodePortHttp: 30090
     servicePortHttp: 19530
     targetPortHttp: 19530
@@ -673,7 +684,7 @@ VectorAttu:
   service:
     annotations: {}
     labels: {}
-    type: NodePort
+    type: LoadBalancer
     nodePortHttp: 30091
     servicePortHttp: 3000
     targetPortHttp: 3000

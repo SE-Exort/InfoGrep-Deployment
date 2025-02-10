@@ -1,9 +1,9 @@
 # Temporarily disable mTLS between proxies
-apiVersion: "security.istio.io/v1beta1"
-kind: "PeerAuthentication"
+apiVersion: security.istio.io/v1beta1
+kind: PeerAuthentication
 metadata:
-  name: "default"
-  namespace: "istio-system"
+  name: default
+  namespace: istio-system
 spec:
   mtls:
     mode: DISABLE

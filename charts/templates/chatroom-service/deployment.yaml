@@ -34,6 +34,9 @@ spec:
           {{- with .Values.DefaultEnv }}
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
+          {{- with .Values.ElasticsearchConfig }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+          {{- end }}
           image: "{{ .Values.ChatroomService.image.repository }}:{{ .Values.ChatroomService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.ChatroomService.image.pullPolicy }}
           resources:

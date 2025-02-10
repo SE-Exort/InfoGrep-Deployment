@@ -22,7 +22,7 @@ spec:
     - name: {{ .Values.InfogrepPostgres.service.servicePortHttpName }}
       protocol: TCP
       port: {{ .Values.InfogrepPostgres.service.servicePortHttp }}
-      targetPort: {{ .Values.InfogrepPostgres.containerPorts.server }}
+      targetPort: {{ .Values.InfogrepPostgres.containerPorts.postgres }}
       {{- if eq .Values.InfogrepPostgres.service.type "NodePort" }}
       nodePort: {{ .Values.InfogrepPostgres.service.nodePortHttp }}
       {{- end }}

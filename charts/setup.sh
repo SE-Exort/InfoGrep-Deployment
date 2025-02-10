@@ -45,8 +45,9 @@ then
     exit 1
 fi
 
-# adding istio helm repo
+# adding helm repos
 helm repo add istio https://istio-release.storage.googleapis.com/charts
+helm repo add elastic https://helm.elastic.co
 helm repo update
 
 # installing istio
@@ -65,6 +66,9 @@ kubectl apply -f "./monitoring/grafana.yaml"
 
 # installing kiali
 kubectl apply -f "./monitoring/kiali.yaml"
+
+# installing the ELK crds
+helm install elastic-operator elastic/eck-operator -n elastic-system --create-namespace
 
 # install charts
 helm upgrade -i \

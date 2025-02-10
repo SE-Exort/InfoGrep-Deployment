@@ -1,0 +1,14 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: {{ template "infogrep.kibanaService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+spec:
+  version: 8.17.1
+  count: 1
+  elasticsearchRef:
+    name: {{ template "infogrep.elasticsearchService.fullname" . }}
+  http:
+    service:
+      spec:
+        type: LoadBalancer
