@@ -73,6 +73,9 @@ PostgresEnv:
         name: infogrep-pg-configs
         key: pgHost
         optional: false
+  - name: PGPORT
+    value: "5432"
+
 # -- Ai Service Config
 AiService:
   name: ai-service
@@ -182,6 +185,12 @@ AuthService:
     requests:
       cpu: 500m
       memory: 128Mi
+  env:
+    CLIENT_ID: ""
+    CLIENT_SECRET: "" 
+    DOMAIN: ""
+    APP_SECRET_KEY: ""
+    AUTH_MODE: ""
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -198,22 +207,6 @@ AuthService:
     externalIPs: []
     externalTrafficPolicy: Cluster
     sessionAffinity: None
-  # -- Authentication Service Init Containers
-  initContainers:
-    - name: wait-for-postgres
-      image: busybox
-      command: ["/bin/sh", "-c"]
-      args:
-        [
-          "until echo 'Waiting for auth service postgres...' && nc -vz -w 2 $PGHOST 5432; do echo 'Looping forever...'; sleep 2; done;",
-        ]
-      env:
-        - name: PGHOST
-          valueFrom:
-            configMapKeyRef:
-              name: infogrep-pg-configs
-              key: pgHost
-              optional: false
 
 # -- Infogrep Postgres Config
 InfogrepPostgres:

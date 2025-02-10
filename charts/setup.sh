@@ -67,7 +67,15 @@ kubectl apply -f "./monitoring/grafana.yaml"
 kubectl apply -f "./monitoring/kiali.yaml"
 
 # install charts
-helm upgrade -i --set KeyConfig.openaiKey=$OPENAI_KEY --set KeyConfig.serpapiKey=$SERPAPI_KEY infogrep .
+helm upgrade -i \
+    --set KeyConfig.openaiKey=$OPENAI_KEY \
+    --set KeyConfig.serpapiKey=$SERPAPI_KEY \
+    --set AuthService.env.CLIENT_ID=$CLIENT_ID \
+    --set AuthService.env.CLIENT_SECRET=$CLIENT_SECRET \
+    --set AuthService.env.DOMAIN=$DOMAIN \
+    --set AuthService.env.APP_SECRET_KEY=$APP_SECRET_KEY \
+    --set AuthService.env.AUTH_MODE=$AUTH_MODE \
+    infogrep .
 
 # create ghcr image pull secret
 kubectl create secret docker-registry ghcr --docker-server=ghcr.io --docker-username=$GHCR_USER --docker-password=$GHCR_PASSWORD --docker-email=$GHCR_EMAIL -n infogrep

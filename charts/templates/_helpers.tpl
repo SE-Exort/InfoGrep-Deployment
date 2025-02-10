@@ -97,3 +97,17 @@
     {{ default "default" .Values.VectorAttu.serviceAccount.name }}
 {{- end -}}
 {{- end -}}
+
+{{- define "waitForPostgres" -}}
+- name: wait-for-postgres
+  image: busybox
+  command: ["/bin/sh", "-c"]
+  args:
+      [
+      "until echo 'Waiting for auth service postgres...' && nc -vz -w 2 $PGHOST $PGPORT; do echo 'Looping forever...'; sleep 2; done;",
+      ] 
+  env:
+  {{- with .Values.PostgresEnv }}
+      {{- tpl (toYaml .) $ | nindent 6 }}
+  {{- end }}
+  {{- end -}}

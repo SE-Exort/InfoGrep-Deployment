@@ -40,3 +40,5 @@ spec:
             {{- toYaml .Values.FileManagementService.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.FileManagementService.containerPorts.server }}
+      initContainers:
+        {{- include "waitForPostgres" . | nindent 6 -}}

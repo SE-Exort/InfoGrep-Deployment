@@ -40,3 +40,5 @@ spec:
             {{- toYaml .Values.ChatroomService.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.ChatroomService.containerPorts.server }}
+      initContainers:
+        {{- include "waitForPostgres" . | nindent 6 -}}

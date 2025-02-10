@@ -34,6 +34,36 @@ spec:
           {{- with .Values.DefaultEnv }}
             {{- tpl (toYaml .) $ | nindent 12 }}
           {{- end }}
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: client_id
+                  optional: true
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: client_secret
+                  optional: true
+            - name: DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: domain
+                  optional: true
+            - name: APP_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: app_secret_key
+                  optional: true
+            - name: AUTH_MODE
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: auth_mode
+                  optional: false
           image: "{{ .Values.AuthService.image.repository }}:{{ .Values.AuthService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.AuthService.image.pullPolicy }}
           resources:
@@ -41,6 +71,4 @@ spec:
           ports:
             - containerPort: {{ .Values.AuthService.containerPorts.server }}
       initContainers:
-      {{- with .Values.AuthService.initContainers }}
-        {{- tpl (toYaml .) $ | nindent 6 }}
-      {{- end }}
+        {{- include "waitForPostgres" . | nindent 6 -}}
