@@ -36,7 +36,9 @@ check_envvar OPENAI_KEY required
 check_envvar GHCR_USER required
 check_envvar GHCR_PASSWORD required
 check_envvar GHCR_EMAIL required
+check_envvar AUTH_MODE required
 check_envvar SERPAPI_KEY optional
+check_envvar CLIENT_ID optional
 
 # check istioctl is installed
 if ! command -v istioctl 2>&1 >/dev/null
@@ -45,41 +47,43 @@ then
     exit 1
 fi
 
+INFOGREP_CHART_DIR="./charts"
+ECK_OPERATOR_CHART_DIR="./eck-operator-charts"
+
 # adding helm repos
 helm repo add istio https://istio-release.storage.googleapis.com/charts
-helm repo add elastic https://helm.elastic.co
 helm repo update
 
 # installing istio
 helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
 helm install istiod istio/istiod -n istio-system --wait
-kubectl apply -f "./monitoring/mtls.yaml"
+kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/mtls.yaml"
 
 # installing Jaegar
-kubectl apply -f "./monitoring/jaegar.yaml"
-istioctl install -f "./monitoring/tracing.yaml" --skip-confirmation
-kubectl apply -f "./monitoring/mesh-default-tracing.yaml"
+kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/jaegar.yaml"
+istioctl install -f "${INFOGREP_CHART_DIR}/monitoring/tracing.yaml" --skip-confirmation
+kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/mesh-default-tracing.yaml"
 
 # installing Grafana & Prometheus
-kubectl apply -f "./monitoring/prometheus.yaml"
-kubectl apply -f "./monitoring/grafana.yaml"
+kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/prometheus.yaml"
+kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/grafana.yaml"
 
 # installing kiali
-kubectl apply -f "./monitoring/kiali.yaml"
+kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/kiali.yaml"
 
 # installing the ELK crds
-helm install elastic-operator elastic/eck-operator -n elastic-system --create-namespace
+helm install elastic-operator $ECK_OPERATOR_CHART_DIR -n elastic-system --create-namespace \
+    --values="${ECK_OPERATOR_CHART_DIR}/profile-istio.yaml" \
 
 # install charts
-helm upgrade -i \
+helm install infogrep $INFOGREP_CHART_DIR \
     --set KeyConfig.openaiKey=$OPENAI_KEY \
     --set KeyConfig.serpapiKey=$SERPAPI_KEY \
     --set AuthService.env.CLIENT_ID=$CLIENT_ID \
     --set AuthService.env.CLIENT_SECRET=$CLIENT_SECRET \
     --set AuthService.env.DOMAIN=$DOMAIN \
     --set AuthService.env.APP_SECRET_KEY=$APP_SECRET_KEY \
-    --set AuthService.env.AUTH_MODE=$AUTH_MODE \
-    infogrep .
+    --set AuthService.env.AUTH_MODE=$AUTH_MODE
 
 # create ghcr image pull secret
 kubectl create secret docker-registry ghcr --docker-server=ghcr.io --docker-username=$GHCR_USER --docker-password=$GHCR_PASSWORD --docker-email=$GHCR_EMAIL -n infogrep

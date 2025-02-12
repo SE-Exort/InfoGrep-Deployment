@@ -14,12 +14,13 @@ set +a
 
 echo "Environment variables loaded from $ENV_FILE."
 
-helm upgrade -i \
+INFOGREP_CHART_DIR="./charts"
+
+helm upgrade -i infogrep $INFOGREP_CHART_DIR \
     --set KeyConfig.openaiKey=$OPENAI_KEY \
     --set KeyConfig.serpapiKey=$SERPAPI_KEY \
     --set AuthService.env.CLIENT_ID=$CLIENT_ID \
     --set AuthService.env.CLIENT_SECRET=$CLIENT_SECRET \
     --set AuthService.env.DOMAIN=$DOMAIN \
     --set AuthService.env.APP_SECRET_KEY=$APP_SECRET_KEY \
-    --set AuthService.env.AUTH_MODE=$AUTH_MODE \
-    infogrep .
+    --set AuthService.env.AUTH_MODE=$AUTH_MODE
