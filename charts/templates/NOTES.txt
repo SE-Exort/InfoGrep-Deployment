@@ -1,2 +1,13 @@
-1. Get the application URL by running these commands:
-GLHF LOL
+Infogrep charts deployed.
+
+Start testing all service locally with `minikube tunnel --cleanup`
+
+For observability dashboards, run:
+
+- istioctl dashboard grafana for Grafana,
+- istioctl dashboard jaeger for distributed tracing,
+- istioctl dashboard kiali for traffic graphs.
+
+For logging, access the kibana dashboard at https://127.0.0.1:5601
+
+For the milvus dashboard, access the system webui at http://127.0.0.1:9091/webui.
