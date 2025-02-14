@@ -1,0 +1,5 @@
+Milvus Operator Is Starting, use `kubectl get -n {{ .Release.Namespace }} deploy/{{ .Release.Name }}` to check if its successfully installed
+Full Installation doc can be found in https://github.com/zilliztech/milvus-operator/blob/main/docs/installation/installation.md
+Quick start with `kubectl apply -f https://raw.githubusercontent.com/zilliztech/milvus-operator/main/config/samples/milvus_minimum.yaml`
+More samples can be found in https://github.com/zilliztech/milvus-operator/tree/main/config/samples
+CRD Documentation can be found in https://github.com/zilliztech/milvus-operator/tree/main/docs/CRD

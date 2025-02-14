@@ -50,52 +50,78 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "infogrep.vectorEtcd.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorEtcd.name | trunc 63 | trimSuffix "-" -}}
+
+{{- define "infogrep.milvus.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.MilvusConfig.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{- define "infogrep.vectorEtcd.serviceAccountName" -}}
-{{- if .Values.VectorEtcd.serviceAccount.create -}}
-    {{ default (include "infogrep.fileManagementService.fullname" .) .Values.VectorEtcd.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.VectorEtcd.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
+# {{- define "infogrep.milvus.serviceAccountName" -}}
+# {{- if .Values.VectorMilvus.serviceAccount.create -}}
+#     {{ default (include "infogrep.vectorMilvus.fullname" .) .Values.VectorMilvus.serviceAccount.name }}
+# {{- else -}}
+#     {{ default "default" .}}
+# {{- end -}}
+# {{- end -}}
 
-{{- define "infogrep.vectorMinio.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorMinio.name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "infogrep.vectorMinio.serviceAccountName" -}}
-{{- if .Values.VectorMinio.serviceAccount.create -}}
-    {{ default (include "infogrep.vectorMinio.fullname" .) .Values.VectorMinio.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.VectorMinio.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
-
-{{- define "infogrep.vectorMilvus.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorMilvus.name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "infogrep.vectorMilvus.serviceAccountName" -}}
-{{- if .Values.VectorMilvus.serviceAccount.create -}}
-    {{ default (include "infogrep.vectorMilvus.fullname" .) .Values.VectorMilvus.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.VectorMilvus.serviceAccount.name }}
-{{- end -}}
-{{- end -}}
-
-{{- define "infogrep.vectorAttu.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.VectorAttu.name | trunc 63 | trimSuffix "-" -}}
-{{- end -}}
-
-{{- define "infogrep.vectorAttu.serviceAccountName" -}}
-{{- if .Values.VectorAttu.serviceAccount.create -}}
-    {{ default (include "infogrep.vectorAttu.fullname" .) .Values.VectorAttu.serviceAccount.name }}
-{{- else -}}
-    {{ default "default" .Values.VectorAttu.serviceAccount.name }}
-{{- end -}}
+{{- define "defaultEnv" -}}
+- name: AI_SERVICE_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: infogrep-service-url-config
+      key: aiServiceHost
+      optional: false
+- name: AUTH_SERVICE_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: infogrep-service-url-config
+      key: authServiceHost
+      optional: false
+- name: CHATROOM_SERVICE_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: infogrep-service-url-config
+      key: chatroomServiceHost
+      optional: false
+- name: FILE_MANAGEMENT_SERVICE_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: infogrep-service-url-config
+      key: fileManagementServiceHost
+      optional: false
+- name: MILVUS_SERVICE_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: infogrep-service-url-config
+      key: milvusServiceHost
+      optional: false
+- name: POSTGRES_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: infogrep-pg-creds
+      key: password
+      optional: false
+- name: POSTGRES_USERNAME
+  valueFrom:
+    secretKeyRef:
+      name: infogrep-pg-creds
+      key: username
+      optional: false
+- name: PGHOST
+  valueFrom:
+    configMapKeyRef:
+      name: infogrep-pg-configs
+      key: pgHost
+      optional: false
+- name: PGPORT
+  value: "5432"
+- name: ES_SERVICE_HOST
+  value: "{{ template "infogrep.elasticsearchService.fullname" . }}-es-http"
+- name: ES_SERVICE_PASSWORD
+  valueFrom:
+    secretKeyRef:
+      name: {{ template "infogrep.elasticsearchService.fullname" . }}-es-elastic-user
+      key: elastic
+      optional: false
 {{- end -}}
 
 {{- define "waitForPostgres" -}}
@@ -107,10 +133,8 @@
       "until echo 'Waiting for auth service postgres...' && nc -vz -w 2 $PGHOST $PGPORT; do echo 'Looping forever...'; sleep 2; done;",
       ] 
   env:
-  {{- with .Values.PostgresEnv }}
-      {{- tpl (toYaml .) $ | nindent 6 }}
-  {{- end }}
-  {{- end -}}
+  {{- include "defaultEnv" . | nindent 2}}
+{{- end -}}
 
 {{- define "infogrep.elasticsearchService.fullname" -}}
 {{- printf "%s-%s" (include "infogrep.fullname" .) "elasticsearch" | trunc 63 | trimSuffix "-" -}}

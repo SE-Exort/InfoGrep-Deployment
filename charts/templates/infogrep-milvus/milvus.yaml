@@ -1,0 +1,32 @@
+apiVersion: milvus.io/v1beta1
+kind: Milvus
+metadata:
+  name: {{ template "infogrep.milvus.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: milvus
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.MilvusConfig.name "name" .Values.MilvusConfig.name) | nindent 4 }}
+spec:
+  config: {}
+  components:
+    standalone:
+      replicas: {{ .Values.MilvusConfig.standaloneReplica }}
+      serviceType: {{ .Values.MilvusConfig.serviceType }}
+  dependencies:
+    etcd:
+      inCluster:
+        values:
+          replicaCount: {{ .Values.MilvusConfig.etcdReplica }}
+        deletionPolicy: Delete
+        pvcDeletion: true
+    storage:
+      inCluster:
+        values:
+          mode: standalone
+          resources:
+            {{- toYaml .Values.FileManagementService.resources | nindent 12 }}
+          persistence:
+              size: {{ .Values.MilvusConfig.pvSize }}
+        deletionPolicy: Delete
+        pvcDeletion: true
+ 

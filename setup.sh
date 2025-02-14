@@ -49,6 +49,7 @@ fi
 
 INFOGREP_CHART_DIR="./charts"
 ECK_OPERATOR_CHART_DIR="./eck-operator-charts"
+MILVUS_OPERATOR_CHART_DIR="./milvus-operator-charts"
 
 # adding helm repos
 helm repo add istio https://istio-release.storage.googleapis.com/charts
@@ -71,9 +72,12 @@ kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/grafana.yaml"
 # installing kiali
 kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/kiali.yaml"
 
-# installing the ELK crds
+# installing the ELK operator
 helm install elastic-operator $ECK_OPERATOR_CHART_DIR -n elastic-system --create-namespace \
     --values="${ECK_OPERATOR_CHART_DIR}/profile-istio.yaml" \
+
+# installing the Milvus operator
+helm install milvus-operator $MILVUS_OPERATOR_CHART_DIR -n milvus-operator --create-namespace
 
 # install charts
 helm install infogrep $INFOGREP_CHART_DIR \
