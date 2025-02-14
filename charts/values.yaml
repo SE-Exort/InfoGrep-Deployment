@@ -336,3 +336,31 @@ MilvusConfig:
       cpu: 500m
       memory: 512Mi
   pvSize: 5Gi
+
+# -- Elasticsearch Configurations
+ElasticsearchConfig:
+  name: elasticsearch-logs
+  replicaCount: 1
+  defaultPodSpec: "true"
+  resources:
+    limits:
+      cpu: 4
+      memory: 8Gi
+    requests:
+      cpu: 2
+      memory: 4Gi
+  pvSize: 5Gi
+
+# -- Kibana Configurations
+KibanaConfig:
+  name: kibana
+  replicaCount: 1
+  serviceType: LoadBalancer
+  defaultPodSpec: "false"
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi

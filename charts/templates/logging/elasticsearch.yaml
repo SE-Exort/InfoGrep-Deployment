@@ -3,11 +3,13 @@ kind: Elasticsearch
 metadata:
   name: {{ template "infogrep.elasticsearchService.fullname" . }}
   namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.ElasticsearchConfig.name "name" .Values.ElasticsearchConfig.name) | nindent 4 }}
 spec:
   version: 8.17.1
   nodeSets:
   - name: default
-    count: 1
+    count: {{ .Values.ElasticsearchConfig.replicaCount }}
     volumeClaimTemplates:
     - metadata:
         name: elasticsearch-data
@@ -16,7 +18,15 @@ spec:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 5Gi
+            storage: {{ .Values.ElasticsearchConfig.pvSize }}
         storageClassName: standard
     config:
       node.store.allow_mmap: false
+    {{- if eq .Values.ElasticsearchConfig.defaultPodSpec "false"}}
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          resources:
+            {{- toYaml .Values.ElasticsearchConfig.resources | nindent 12 }}
+    {{- end }}

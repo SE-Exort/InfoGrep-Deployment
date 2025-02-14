@@ -137,7 +137,7 @@
 {{- end -}}
 
 {{- define "infogrep.elasticsearchService.fullname" -}}
-{{- printf "%s-%s" (include "infogrep.fullname" .) "elasticsearch" | trunc 63 | trimSuffix "-" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) "elasticsearch-logs" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "infogrep.kibanaService.fullname" -}}
