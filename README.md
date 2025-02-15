@@ -15,7 +15,7 @@ Helm Charts for deploying InfoGrep
 
 ### Setup Steps
 
-1. `minikube start` to start your k8s cluster.
+1. `minikube start --cpus max --memory max` to start a k8s cluster with the maximum resource.
 2. Create the `.env` file from the `.env.template` file with `cp .env.template .env`. Fill out the mandatory env vars with an appropriate value. If you are not sure what to put in, reach out to @TyroneHe-0926.
 3. Run the setup script with `bash setup.sh`.
 4. If you are updating a service, or just wanted to pull an updated image, run `minikube image ls` first to get the list of image, and remove the one that you want to update with `minikube image rm <your-image>`. Then run the update script with `bash update.sh`.

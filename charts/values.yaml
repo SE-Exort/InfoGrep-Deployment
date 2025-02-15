@@ -92,11 +92,11 @@ AiService:
     ports: 11434
     resources:
       limits:
-        cpu: 500m
-        memory: 1Gi
+        cpu: 2
+        memory: 8Gi
       requests:
-        cpu: 500m
-        memory: 512Mi
+        cpu: 1
+        memory: 8Gi
 
 # -- Authentication Service Config
 AuthService:

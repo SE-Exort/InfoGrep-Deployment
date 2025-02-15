@@ -56,8 +56,8 @@ helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update
 
 # installing istio
-helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace
-helm install istiod istio/istiod -n istio-system --wait
+helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace --version 1.24.2
+helm install istiod istio/istiod -n istio-system --wait --version 1.24.2
 kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/mtls.yaml"
 
 # installing Jaegar
