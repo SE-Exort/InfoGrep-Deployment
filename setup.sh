@@ -92,6 +92,12 @@ helm install infogrep $INFOGREP_CHART_DIR \
 # create ghcr image pull secret
 kubectl create secret docker-registry ghcr --docker-server=ghcr.io --docker-username=$GHCR_USER --docker-password=$GHCR_PASSWORD --docker-email=$GHCR_EMAIL -n infogrep
 
+if nc -z localhost 11434 2>/dev/null; then
+    echo -e "Ollama running on localhost"
+else
+    echo -e "\033[0;31m \t !!!!! Looks like Ollama is not running on your machine, please ensure that it is running. \t !!!!!"
+fi
+
 echo -e "\033[1;33m \t ***** InfoGrep Successfully Deployed! ***** \t"
 
 cat << EOF
