@@ -122,6 +122,12 @@
       name: {{ template "infogrep.elasticsearchService.fullname" . }}-es-elastic-user
       key: elastic
       optional: false
+- name: OLLAMA_SERVICE_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: infogrep-service-url-config
+      key: ollamaServiceHost
+      optional: false
 {{- end -}}
 
 {{- define "waitForPostgres" -}}

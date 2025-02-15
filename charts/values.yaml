@@ -85,6 +85,7 @@ AiService:
     extraRules: []
     extraTls: []
   # -- Ollama Container Configuration
+  ollamaCreate: "false"
   ollamaImage:
     repository: ollama/ollama
     pullPolicy: Always
