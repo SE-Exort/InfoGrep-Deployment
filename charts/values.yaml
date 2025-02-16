@@ -296,7 +296,7 @@ KibanaConfig:
 InfogrepPostgres:
   # -- Infogrep Postgress Name
   name: postgres
-  replicaCount: 1
+  replicaCount: 3
   # -- Default Docker Hub Postgres Image
   image:
     repository: postgres
@@ -317,10 +317,8 @@ InfogrepPostgres:
     postgres: 5432
   # -- PVC Config
   persistence:
-    claimName: infogrep-postgres-pv-claim
     volumeName: infogrep-postgres-pv
     mountPath: "/var/lib/postgresql/data"
-    hostPath: "/data"
     storageClass: local-storage
     size: 3Gi
     accessModes:

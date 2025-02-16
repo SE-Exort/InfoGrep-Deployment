@@ -1,14 +1,14 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: {{ .Values.InfogrepPostgres.persistence.volumeName }}
+  name: "{{ .Values.InfogrepPostgres.persistence.volumeName }}-1"
   namespace: {{ .Values.namespace }}
 {{- with .Values.InfogrepPostgres.persistence.annotations  }}
   annotations:
     {{ toYaml . | indent 4 }}
 {{- end }}
   labels:
-    {{- include "infogrep.labels" (dict "context" . "component" .Values.InfogrepPostgres.persistence.volumeName "name" .Values.InfogrepPostgres.persistence.volumeName) | nindent 4 }}
+    {{- include "infogrep.labels" (dict "context" . "component" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "1") "name" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "1")) | nindent 4 }}
 spec:
   storageClassName: {{ .Values.InfogrepPostgres.persistence.storageClass }}
   capacity:
@@ -19,10 +19,76 @@ spec:
   {{- end }}
   {{- if eq .Values.InfogrepPostgres.persistence.storageClass "manual" }}
   hostPath:
-    path: {{ .Values.InfogrepPostgres.persistence.hostPath }}
+    path: "/data"
   {{- else if eq .Values.InfogrepPostgres.persistence.storageClass "local-storage" }}
   local:
-    path: {{ .Values.InfogrepPostgres.persistence.hostPath }}
+    path: "/data"
+  {{- with .Values.InfogrepPostgres.persistence.nodeAffinity}}
+  nodeAffinity:
+    {{- toYaml . | nindent 4}}
+  {{- end }}
+  {{- end }}
+
+---
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: "{{ .Values.InfogrepPostgres.persistence.volumeName }}-2"
+  namespace: {{ .Values.namespace }}
+{{- with .Values.InfogrepPostgres.persistence.annotations  }}
+  annotations:
+    {{ toYaml . | indent 4 }}
+{{- end }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "2") "name" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "2")) | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+  capacity:
+    storage: {{ .Values.InfogrepPostgres.persistence.size }}
+  {{- with .Values.InfogrepPostgres.persistence.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if eq .Values.InfogrepPostgres.persistence.storageClass "manual" }}
+  hostPath:
+    path: "/var/backups"
+  {{- else if eq .Values.InfogrepPostgres.persistence.storageClass "local-storage" }}
+  local:
+    path: "/var/backups"
+  {{- with .Values.InfogrepPostgres.persistence.nodeAffinity}}
+  nodeAffinity:
+    {{- toYaml . | nindent 4}}
+  {{- end }}
+  {{- end }}
+
+---
+
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: "{{ .Values.InfogrepPostgres.persistence.volumeName }}-3"
+  namespace: {{ .Values.namespace }}
+{{- with .Values.InfogrepPostgres.persistence.annotations  }}
+  annotations:
+    {{ toYaml . | indent 4 }}
+{{- end }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "3") "name" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "3")) | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+  capacity:
+    storage: {{ .Values.InfogrepPostgres.persistence.size }}
+  {{- with .Values.InfogrepPostgres.persistence.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if eq .Values.InfogrepPostgres.persistence.storageClass "manual" }}
+  hostPath:
+    path: "/usr/local/games"
+  {{- else if eq .Values.InfogrepPostgres.persistence.storageClass "local-storage" }}
+  local:
+    path: "/usr/local/games"
   {{- with .Values.InfogrepPostgres.persistence.nodeAffinity}}
   nodeAffinity:
     {{- toYaml . | nindent 4}}
