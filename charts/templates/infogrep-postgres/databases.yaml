@@ -1,0 +1,32 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: "{{ template "infogrep.postgres.fullname" . }}-user"
+  namespace: {{ .Values.namespace }}
+spec:
+  name: user
+  owner: postgres
+  cluster:
+    name: {{ template "infogrep.postgres.fullname" . }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: "{{ template "infogrep.postgres.fullname" . }}-chatroom"
+  namespace: {{ .Values.namespace }}
+spec:
+  name: chatroom
+  owner: postgres
+  cluster:
+    name: {{ template "infogrep.postgres.fullname" . }}
+---
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: "{{ template "infogrep.postgres.fullname" . }}-file"
+  namespace: {{ .Values.namespace }}
+spec:
+  name: file
+  owner: postgres
+  cluster:
+    name: {{ template "infogrep.postgres.fullname" . }}
