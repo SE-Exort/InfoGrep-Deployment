@@ -153,80 +153,6 @@ AuthService:
     externalTrafficPolicy: Cluster
     sessionAffinity: None
 
-# -- Infogrep Postgres Config
-InfogrepPostgres:
-  # -- Infogrep Postgress Name
-  name: infogrep-postgres
-  replicaCount: 1
-  # -- Default Docker Hub Postgres Image
-  image:
-    repository: postgres
-    pullPolicy: IfNotPresent
-    tag: latest
-  # -- Default namespace
-  namespace: ""
-  # -- Postgres Resource Config
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1Gi
-    requests:
-      cpu: 500m
-      memory: 512Mi
-  # -- Container Ports
-  containerPorts:
-    postgres: 5432
-  # -- Postgres Readiness Probe
-  readinessProbe:
-    enabled: true
-    command:
-      - "pg_isready"
-      - "-U"
-      - "postgres"
-    failureThreshold: 3
-    initialDelaySeconds: 10
-    periodSeconds: 5
-    successThreshold: 1
-    timeoutSeconds: 5
-  # -- K8s Service Configuration
-  service:
-    annotations: {}
-    labels: {}
-    type: ClusterIP
-    nodePortHttp: 30082
-    servicePortHttp: 5432
-    targetPortHttp: 5432
-    servicePortHttpName: database
-    servicePortHttpsAppProtocol: ""
-    loadBalancerClass: ""
-    loadBalancerIP: ""
-    loadBalancerSourceRanges: []
-    externalIPs: []
-    externalTrafficPolicy: Cluster
-    sessionAffinity: None
-  # -- Postgres Env
-  env:
-    username: postgres
-    password: example
-  # -- PVC Config
-  persistence:
-    claimName: infogrep-postgres-pv-claim
-    volumeName: infogrep-postgres-pv
-    mountPath: "/var/lib/postgresql/data"
-    hostPath: "/data"
-    storageClass: local-storage
-    size: 2Gi
-    accessModes:
-      - ReadWriteOnce
-    nodeAffinity:
-      required:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                  - minikube
-
 # -- Chatroom Service Config
 ChatroomService:
   name: chatroom-service
@@ -365,3 +291,65 @@ KibanaConfig:
     requests:
       cpu: 500m
       memory: 1Gi
+
+# -- Infogrep Postgres Configurations
+InfogrepPostgres:
+  # -- Infogrep Postgress Name
+  name: postgres
+  replicaCount: 1
+  # -- Default Docker Hub Postgres Image
+  image:
+    repository: postgres
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- Default namespace
+  namespace: ""
+  # -- Postgres Resource Config
+  resources:
+    limits:
+      cpu: 1
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  # -- Container Ports
+  containerPorts:
+    postgres: 5432
+  # -- PVC Config
+  persistence:
+    claimName: infogrep-postgres-pv-claim
+    volumeName: infogrep-postgres-pv
+    mountPath: "/var/lib/postgresql/data"
+    hostPath: "/data"
+    storageClass: local-storage
+    size: 3Gi
+    accessModes:
+      - ReadWriteOnce
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - minikube
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+    nodePortHttp: 30082
+    servicePortHttp: 5432
+    targetPortHttp: 5432
+    servicePortHttpName: database
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+  ## -- default user name and password for local host, please override this
+  env:
+    username: postgres
+    password: example

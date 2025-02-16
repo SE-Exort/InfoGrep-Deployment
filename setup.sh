@@ -50,13 +50,14 @@ fi
 INFOGREP_CHART_DIR="./charts"
 ECK_OPERATOR_CHART_DIR="./eck-operator-charts"
 MILVUS_OPERATOR_CHART_DIR="./milvus-operator-charts"
+CNPG_OPERATOR_CHART_DIR="./cloudnative-pg-charts"
 
 # adding helm repos
 helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo update
 
 # installing istio
-helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace --version 1.24.2
+helm install istio-base istio/base -n istio-system --set defaultRevision=default --create-namespace --wait --version 1.24.2
 helm install istiod istio/istiod -n istio-system --wait --version 1.24.2
 kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/mtls.yaml"
 
@@ -73,11 +74,14 @@ kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/grafana.yaml"
 kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/kiali.yaml"
 
 # installing the ELK operator
-helm install elastic-operator $ECK_OPERATOR_CHART_DIR -n elastic-system --create-namespace \
+helm install elastic-operator $ECK_OPERATOR_CHART_DIR -n elastic-system --create-namespace --wait \
     --values="${ECK_OPERATOR_CHART_DIR}/profile-istio.yaml" \
 
 # installing the Milvus operator
-helm install milvus-operator $MILVUS_OPERATOR_CHART_DIR -n milvus-operator --create-namespace
+helm install milvus-operator $MILVUS_OPERATOR_CHART_DIR -n milvus-operator --create-namespace --wait
+
+# installing the CNPG operator
+helm install cnpg $CNPG_OPERATOR_CHART_DIR -n cnpg-system --create-namespace --wait
 
 # install charts
 helm install infogrep $INFOGREP_CHART_DIR \

@@ -22,8 +22,12 @@
 {{- end -}}
 {{- end -}}
 
-{{- define "infogrep.infogrepPostgres.fullname" -}}
+{{- define "infogrep.postgres.fullname" -}}
 {{- printf "%s-%s" (include "infogrep.fullname" .) .Values.InfogrepPostgres.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{- define "infogrep.postgresService.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.postgres.fullname" .) "rw" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{- define "infogrep.chatroomService.fullname" -}}

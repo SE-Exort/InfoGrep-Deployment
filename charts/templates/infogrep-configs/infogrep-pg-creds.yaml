@@ -5,7 +5,7 @@ metadata:
   namespace: {{ .Values.namespace }}
   labels:
     {{- include "infogrep.labels" (dict "context" $) | nindent 4 }}
-type: Opaque
+type: kubernetes.io/basic-auth
 data:
   {{- with .Values.InfogrepPostgres.env.username }}
   username: {{ . | b64enc }}

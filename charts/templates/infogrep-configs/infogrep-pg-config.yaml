@@ -6,4 +6,4 @@ metadata:
   labels:
     {{- include "infogrep.labels" (dict "context" . "component" .Values.InfogrepPostgres.name "name" "infogrep-pg-configs") | nindent 4 }}
 data:
-  pgHost: {{ template "infogrep.infogrepPostgres.fullname" . }}
+  pgHost: {{ template "infogrep.postgresService.fullname" . }}

@@ -1,26 +1,3 @@
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: {{ .Values.InfogrepPostgres.persistence.claimName }}
-  namespace: {{ .Values.namespace }}
-  labels:
-    {{- include "infogrep.labels" (dict "context" . "component" .Values.InfogrepPostgres.persistence.claimName "name" .Values.InfogrepPostgres.persistence.claimName) | nindent 4 }}
-{{- with .Values.InfogrepPostgres.persistence.annotations  }}
-  annotations:
-    {{ toYaml . | indent 4 }}
-{{- end }}
-spec:
-  storageClassName: {{ .Values.InfogrepPostgres.persistence.storageClass }}
-  {{- with .Values.InfogrepPostgres.persistence.accessModes }}
-  accessModes:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-  resources:
-    requests:
-      storage: {{ .Values.InfogrepPostgres.persistence.size }}
-
----
-
 kind: PersistentVolume
 apiVersion: v1
 metadata:
