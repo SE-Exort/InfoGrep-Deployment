@@ -296,7 +296,7 @@ KibanaConfig:
 InfogrepPostgres:
   # -- Infogrep Postgress Name
   name: postgres
-  replicaCount: 3
+  replicaCount: 2
   # -- Default Docker Hub Postgres Image
   image:
     repository: postgres
