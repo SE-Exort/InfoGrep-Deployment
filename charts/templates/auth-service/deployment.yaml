@@ -25,10 +25,14 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      volumes:
+        {{- include "infogrepClientCertVoumes" . | nindent 8 }}
       containers:
         - name: {{ .Values.AuthService.name }}
           env:
-          {{- include "defaultEnv" . | nindent 12}}
+            {{- include "defaultEnv" . | nindent 12 }}
+            {{- include "infogrepPostgresEnv" . | nindent 12 }}
+            {{- include "infogrepElasticsearchEnv" . | nindent 12 }}
             - name: PG_DATABASE_NAME
               value: "user"
             - name: CLIENT_ID
@@ -67,5 +71,7 @@ spec:
             {{- toYaml .Values.AuthService.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.AuthService.containerPorts.server }}
+          volumeMounts:
+            {{- include "infogrepClientCertVolumeMounts" . | nindent 12 }}
       initContainers:
         {{- include "waitForPostgres" . | nindent 6 -}}

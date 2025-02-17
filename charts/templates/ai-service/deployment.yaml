@@ -25,10 +25,13 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      volumes:
+        {{- include "infogrepClientCertVoumes" . | nindent 8 }}
       containers:
         - name: {{ .Values.AiService.name }}
           env:
-          {{- include "defaultEnv" . | nindent 12}}
+            {{- include "defaultEnv" . | nindent 12 }}
+            {{- include "infogrepElasticsearchEnv" . | nindent 12 }}
             - name: OPENAI_KEY
               valueFrom:
                 secretKeyRef:
@@ -41,6 +44,8 @@ spec:
             {{- toYaml .Values.AiService.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.AiService.containerPorts.server }}
+          volumeMounts:
+            {{- include "infogrepClientCertVolumeMounts" . | nindent 12 }}
       {{- if eq .Values.AiService.ollamaCreate "true" }}
         - name: "{{ .Values.AiService.name }}-ollama"
           image: "{{ .Values.AiService.ollamaImage.repository}}:{{ .Values.AiService.ollamaImage.tag | default "latest" }}"

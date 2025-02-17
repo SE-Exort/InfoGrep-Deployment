@@ -67,6 +67,21 @@
 # {{- end -}}
 # {{- end -}}
 
+{{- define "infogrepClientCertVolumeMounts" -}}
+- name: infogrep-internal-client-certs
+  mountPath: "/etc/secrets/ca"
+  readOnly: true
+{{- end -}}
+
+{{- define "infogrepClientCertVoumes" -}}
+- name: infogrep-internal-client-certs
+  secret:
+    secretName: "{{ template "infogrep.elasticsearchService.fullname" . }}-es-http-certs-public"
+    items:
+      - key: tls.crt
+        path: elasticsearch/tls.crt
+{{- end -}}
+
 {{- define "defaultEnv" -}}
 - name: AI_SERVICE_HOST
   valueFrom:
@@ -98,6 +113,15 @@
       name: infogrep-service-url-config
       key: milvusServiceHost
       optional: false
+- name: OLLAMA_SERVICE_HOST
+  valueFrom:
+    configMapKeyRef:
+      name: infogrep-service-url-config
+      key: ollamaServiceHost
+      optional: false
+{{- end -}}
+
+{{- define "infogrepPostgresEnv" -}}
 - name: POSTGRES_PASSWORD
   valueFrom:
     secretKeyRef:
@@ -118,6 +142,9 @@
       optional: false
 - name: PGPORT
   value: "5432"
+{{- end -}}
+
+{{- define "infogrepElasticsearchEnv" -}}
 - name: ES_SERVICE_HOST
   value: "{{ template "infogrep.elasticsearchService.fullname" . }}-es-http"
 - name: ES_SERVICE_PASSWORD
@@ -126,12 +153,10 @@
       name: {{ template "infogrep.elasticsearchService.fullname" . }}-es-elastic-user
       key: elastic
       optional: false
-- name: OLLAMA_SERVICE_HOST
-  valueFrom:
-    configMapKeyRef:
-      name: infogrep-service-url-config
-      key: ollamaServiceHost
-      optional: false
+- name: ES_VERIFY_CERT
+  value: "true"
+- name: ES_TLS_CERT_PATH
+  value: "/etc/secrets/ca/elasticsearch/tls.crt"
 {{- end -}}
 
 {{- define "waitForPostgres" -}}
@@ -143,7 +168,7 @@
       "until echo 'Waiting for auth service postgres...' && nc -vz -w 2 $PGHOST $PGPORT; do echo 'Looping forever...'; sleep 2; done;",
       ] 
   env:
-  {{- include "defaultEnv" . | nindent 2}}
+  {{- include "infogrepPostgresEnv" . | nindent 2}}
 {{- end -}}
 
 {{- define "infogrep.elasticsearchService.fullname" -}}

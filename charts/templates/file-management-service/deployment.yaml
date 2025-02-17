@@ -25,17 +25,23 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      volumes:
+        {{- include "infogrepClientCertVoumes" . | nindent 8 }}
       containers:
         - name: {{ .Values.FileManagementService.name }}
           env:
+            {{- include "defaultEnv" . | nindent 12 }}
+            {{- include "infogrepPostgresEnv" . | nindent 12 }}
+            {{- include "infogrepElasticsearchEnv" . | nindent 12 }}
             - name: PG_DATABASE_NAME
               value: "file"
-          {{- include "defaultEnv" . | nindent 12}}
           image: "{{ .Values.FileManagementService.image.repository }}:{{ .Values.FileManagementService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.FileManagementService.image.pullPolicy }}
           resources:
             {{- toYaml .Values.FileManagementService.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.FileManagementService.containerPorts.server }}
+          volumeMounts:
+            {{- include "infogrepClientCertVolumeMounts" . | nindent 12 }}
       initContainers:
         {{- include "waitForPostgres" . | nindent 6 -}}

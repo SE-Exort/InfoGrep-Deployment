@@ -25,10 +25,14 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
     {{- end }}
+      volumes:
+        {{- include "infogrepClientCertVoumes" . | nindent 8 }}
       containers:
         - name: {{ .Values.ChatroomService.name }}
           env:
-          {{- include "defaultEnv" . | nindent 12}}
+            {{- include "defaultEnv" . | nindent 12 }}
+            {{- include "infogrepPostgresEnv" . | nindent 12 }}
+            {{- include "infogrepElasticsearchEnv" . | nindent 12 }}
             - name: PG_DATABASE_NAME
               value: "chatroom"
           image: "{{ .Values.ChatroomService.image.repository }}:{{ .Values.ChatroomService.image.tag | default "latest" }}"
@@ -37,5 +41,7 @@ spec:
             {{- toYaml .Values.ChatroomService.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.ChatroomService.containerPorts.server }}
+          volumeMounts:
+            {{- include "infogrepClientCertVolumeMounts" . | nindent 12 }}
       initContainers:
         {{- include "waitForPostgres" . | nindent 6 -}}
