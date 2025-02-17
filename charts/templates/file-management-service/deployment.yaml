@@ -28,6 +28,8 @@ spec:
       containers:
         - name: {{ .Values.FileManagementService.name }}
           env:
+            - name: PG_DATABASE_NAME
+              value: "file"
           {{- include "defaultEnv" . | nindent 12}}
           image: "{{ .Values.FileManagementService.image.repository }}:{{ .Values.FileManagementService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.FileManagementService.image.pullPolicy }}

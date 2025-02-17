@@ -29,6 +29,8 @@ spec:
         - name: {{ .Values.ChatroomService.name }}
           env:
           {{- include "defaultEnv" . | nindent 12}}
+            - name: PG_DATABASE_NAME
+              value: "chatroom"
           image: "{{ .Values.ChatroomService.image.repository }}:{{ .Values.ChatroomService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.ChatroomService.image.pullPolicy }}
           resources:

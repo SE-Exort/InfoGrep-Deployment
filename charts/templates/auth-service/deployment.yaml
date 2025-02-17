@@ -29,6 +29,8 @@ spec:
         - name: {{ .Values.AuthService.name }}
           env:
           {{- include "defaultEnv" . | nindent 12}}
+            - name: PG_DATABASE_NAME
+              value: "user"
             - name: CLIENT_ID
               valueFrom:
                 secretKeyRef:
