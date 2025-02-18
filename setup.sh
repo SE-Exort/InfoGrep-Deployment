@@ -96,6 +96,18 @@ helm install infogrep $INFOGREP_CHART_DIR \
 # create ghcr image pull secret
 kubectl create secret docker-registry ghcr --docker-server=ghcr.io --docker-username=$GHCR_USER --docker-password=$GHCR_PASSWORD --docker-email=$GHCR_EMAIL -n infogrep
 
+# issue cnpg client cert
+curl -sSfL \
+  https://github.com/cloudnative-pg/cloudnative-pg/raw/main/hack/install-cnpg-plugin.sh | \
+  sh -s -- -b ./
+
+./kubectl-cnpg certificate infogrep-cnpg-client-cert \
+  --cnpg-cluster infogrep-postgres \
+  --cnpg-user postgres \
+  -n infogrep
+
+rm ./kubectl-cnpg
+
 if nc -z localhost 11434 2>/dev/null; then
     echo -e "Ollama running on localhost"
 else

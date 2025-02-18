@@ -68,18 +68,44 @@
 # {{- end -}}
 
 {{- define "infogrepClientCertVolumeMounts" -}}
-- name: infogrep-internal-client-certs
-  mountPath: "/etc/secrets/ca"
+- name: infogrep-internal-client-certs-elasticsearch
+  mountPath: "/etc/secrets/ca/elasticsearch"
+  readOnly: true
+- name: infogrep-internal-client-certs-postgres
+  mountPath: "/etc/secrets/ca/postgres"
   readOnly: true
 {{- end -}}
 
 {{- define "infogrepClientCertVoumes" -}}
-- name: infogrep-internal-client-certs
+- name: infogrep-internal-client-certs-elasticsearch
   secret:
     secretName: "{{ template "infogrep.elasticsearchService.fullname" . }}-es-http-certs-public"
+    defaultMode: 256
     items:
       - key: tls.crt
-        path: elasticsearch/tls.crt
+        path: tls.crt
+- name: infogrep-internal-client-certs-postgres
+  projected:
+    defaultMode: 256
+    sources:
+    - secret:
+        name: infogrep-cnpg-client-cert
+        items:
+          - key: tls.crt
+            path: tls.crt
+            mode: 256
+    - secret:
+        name: infogrep-cnpg-client-cert
+        items:
+          - key: tls.key
+            path: tls.key
+            mode: 256
+    - secret:
+        name: infogrep-postgres-ca
+        items:
+          - key: ca.crt
+            path: ca.crt
+            mode: 256
 {{- end -}}
 
 {{- define "defaultEnv" -}}
@@ -142,6 +168,14 @@
       optional: false
 - name: PGPORT
   value: "5432"
+- name: PG_VERIFY_CERT
+  value: "true"
+- name: PG_TLS_CERT_PATH
+  value: "/etc/secrets/ca/postgres/tls.crt"
+- name: PG_TLS_KEY_PATH
+  value: "/etc/secrets/ca/postgres/tls.key"
+- name: PG_CA_CERT_PATH
+  value: "/etc/secrets/ca/postgres/ca.crt"
 {{- end -}}
 
 {{- define "infogrepElasticsearchEnv" -}}
