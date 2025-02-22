@@ -36,4 +36,3 @@ Helm Charts for deploying InfoGrep
 - For logging, access the kibana dashboard at `https://127.0.0.1:5601`
   - the user is just the default user `elastic`
   - you can obtain the password with the following command `kubectl get secret infogrep-elasticsearch-logs-es-elastic-user -n infogrep -o go-template='{{.data.elastic | base64decode}}'`.
-- For the milvus dashboard, access the system webui at `http://127.0.0.1:9091/webui`.

@@ -7,7 +7,10 @@ metadata:
     app: milvus
     {{- include "infogrep.labels" (dict "context" . "component" .Values.MilvusConfig.name "name" .Values.MilvusConfig.name) | nindent 4 }}
 spec:
-  config: {}
+  config:
+    common:
+      security:
+        authorizationEnabled: true
   components:
     standalone:
       replicas: {{ .Values.MilvusConfig.standaloneReplica }}

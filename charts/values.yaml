@@ -252,7 +252,7 @@ FileManagementService:
 # -- Milvus Configurations
 MilvusConfig:
   name: vectordb
-  serviceType: LoadBalancer
+  serviceType: ClusterIP
   standaloneReplica: 1
   etcdReplica: 1
   resources:
