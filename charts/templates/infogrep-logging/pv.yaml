@@ -1,0 +1,69 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: "{{ .Values.ElasticsearchConfig.persistence.volumeName }}-1"
+  namespace: {{ .Values.namespace }}
+{{- with .Values.ElasticsearchConfig.persistence.annotations  }}
+  annotations:
+    {{ toYaml . | indent 4 }}
+{{- end }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" (printf "%s-%s" .Values.ElasticsearchConfig.persistence.volumeName "1") "name" (printf "%s-%s" .Values.ElasticsearchConfig.persistence.volumeName "1")) | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.ElasticsearchConfig.persistence.storageClass }}
+  persistentVolumeReclaimPolicy: {{ .Values.ElasticsearchConfig.persistence.persistentVolumeReclaimPolicy }}
+  capacity:
+    storage: {{ .Values.ElasticsearchConfig.persistence.size }}
+  {{- with .Values.ElasticsearchConfig.persistence.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if eq .Values.ElasticsearchConfig.persistence.storageClass "manual" }}
+  hostPath:
+    path: "/usr/local/src"
+  {{- else if eq .Values.ElasticsearchConfig.persistence.storageClass "local-storage" }}
+  local:
+    path: "/usr/local/src"
+  {{- with .Values.ElasticsearchConfig.persistence.nodeAffinity}}
+  nodeAffinity:
+    {{- toYaml . | nindent 4}}
+  {{- end }}
+  {{- end }}
+  claimRef:
+    namespace: {{ .Values.namespace }}
+    name: "elasticsearch-data-{{ template "infogrep.elasticsearchService.fullname" . }}-es-default-0"
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: "{{ .Values.ElasticsearchConfig.persistence.volumeName }}-2"
+  namespace: {{ .Values.namespace }}
+{{- with .Values.ElasticsearchConfig.persistence.annotations  }}
+  annotations:
+    {{ toYaml . | indent 4 }}
+{{- end }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" (printf "%s-%s" .Values.ElasticsearchConfig.persistence.volumeName "2") "name" (printf "%s-%s" .Values.ElasticsearchConfig.persistence.volumeName "2")) | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.ElasticsearchConfig.persistence.storageClass }}
+  persistentVolumeReclaimPolicy: {{ .Values.ElasticsearchConfig.persistence.persistentVolumeReclaimPolicy }}
+  capacity:
+    storage: {{ .Values.ElasticsearchConfig.persistence.size }}
+  {{- with .Values.ElasticsearchConfig.persistence.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if eq .Values.ElasticsearchConfig.persistence.storageClass "manual" }}
+  hostPath:
+    path: "/usr/local/include"
+  {{- else if eq .Values.ElasticsearchConfig.persistence.storageClass "local-storage" }}
+  local:
+    path: "/usr/local/include"
+  {{- with .Values.ElasticsearchConfig.persistence.nodeAffinity}}
+  nodeAffinity:
+    {{- toYaml . | nindent 4}}
+  {{- end }}
+  {{- end }}
+  claimRef:
+    namespace: {{ .Values.namespace }}
+    name: "elasticsearch-data-{{ template "infogrep.elasticsearchService.fullname" . }}-es-default-1"

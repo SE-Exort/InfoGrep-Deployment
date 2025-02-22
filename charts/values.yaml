@@ -271,7 +271,7 @@ MilvusConfig:
 # -- Elasticsearch Configurations
 ElasticsearchConfig:
   name: elasticsearch-logs
-  replicaCount: 1
+  replicaCount: 2
   defaultPodSpec: "true"
   resources:
     limits:
@@ -280,7 +280,24 @@ ElasticsearchConfig:
     requests:
       cpu: 2
       memory: 4Gi
-  pvSize: 5Gi
+  # -- PVC Config
+  persistence:
+    volumeName: infogrep-logging-es-pv
+    mountPath: "/usr/share/elasticsearch/data"
+    storageClass: local-storage
+    size: 5Gi
+    accessModes:
+      - ReadWriteOnce
+    persistentVolumeReclaimPolicy: Retain
+    nodeAffinity:
+      required:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                  - minikube
+                  - minikube-m03
 
 # -- Kibana Configurations
 KibanaConfig:
@@ -325,6 +342,7 @@ InfogrepPostgres:
     mountPath: "/var/lib/postgresql/data"
     storageClass: local-storage
     size: 3Gi
+    persistentVolumeReclaimPolicy: Retain
     accessModes:
       - ReadWriteOnce
     nodeAffinity:
@@ -334,6 +352,7 @@ InfogrepPostgres:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
+                  - minikube-m02
                   - minikube
   # -- K8s Service Configuration
   service:

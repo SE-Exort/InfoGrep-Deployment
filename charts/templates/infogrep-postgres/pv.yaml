@@ -11,6 +11,7 @@ metadata:
     {{- include "infogrep.labels" (dict "context" . "component" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "1") "name" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "1")) | nindent 4 }}
 spec:
   storageClassName: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+  persistentVolumeReclaimPolicy: {{ .Values.InfogrepPostgres.persistence.persistentVolumeReclaimPolicy }}
   capacity:
     storage: {{ .Values.InfogrepPostgres.persistence.size }}
   {{- with .Values.InfogrepPostgres.persistence.accessModes }}
@@ -28,6 +29,9 @@ spec:
     {{- toYaml . | nindent 4}}
   {{- end }}
   {{- end }}
+  claimRef:
+    namespace: {{ .Values.namespace }}
+    name: "{{ template "infogrep.postgres.fullname" . }}-1"
 
 ---
 
@@ -44,6 +48,7 @@ metadata:
     {{- include "infogrep.labels" (dict "context" . "component" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "2") "name" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "2")) | nindent 4 }}
 spec:
   storageClassName: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+  persistentVolumeReclaimPolicy: {{ .Values.InfogrepPostgres.persistence.persistentVolumeReclaimPolicy }}
   capacity:
     storage: {{ .Values.InfogrepPostgres.persistence.size }}
   {{- with .Values.InfogrepPostgres.persistence.accessModes }}
@@ -61,6 +66,9 @@ spec:
     {{- toYaml . | nindent 4}}
   {{- end }}
   {{- end }}
+  claimRef:
+    namespace: {{ .Values.namespace }}
+    name: "{{ template "infogrep.postgres.fullname" . }}-2"
 
 ---
 
@@ -77,6 +85,7 @@ metadata:
     {{- include "infogrep.labels" (dict "context" . "component" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "3") "name" (printf "%s-%s" .Values.InfogrepPostgres.persistence.volumeName "3")) | nindent 4 }}
 spec:
   storageClassName: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+  persistentVolumeReclaimPolicy: {{ .Values.InfogrepPostgres.persistence.persistentVolumeReclaimPolicy }}
   capacity:
     storage: {{ .Values.InfogrepPostgres.persistence.size }}
   {{- with .Values.InfogrepPostgres.persistence.accessModes }}
@@ -94,3 +103,6 @@ spec:
     {{- toYaml . | nindent 4}}
   {{- end }}
   {{- end }}
+  claimRef:
+    namespace: {{ .Values.namespace }}
+    name: "{{ template "infogrep.postgres.fullname" . }}-3"
