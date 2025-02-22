@@ -1,0 +1,46 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: milvus-user-setup-scripts
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.namespace "name" "milvus-user-setup-scripts") | nindent 4 }}
+data:
+  init-user.sh: |
+    echo "Running user init script"
+    export DEFAULT_TOKEN="root:Milvus"
+    curl --request POST \
+    --url "${MILVUS_SERVICE_ENDPOINT}/v2/vectordb/users/create" \
+    --header "Authorization: Bearer ${DEFAULT_TOKEN}" \
+    --header "Content-Type: application/json" \
+    -d '{
+        "userName": "${MILVUS_USER}",
+        "password": "${MILVUS_PASSWORD}"
+    }'
+    echo "Infogrep Milvus user created"
+    curl --request POST \
+    --url "${MILVUS_SERVICE_ENDPOINT}/v2/vectordb/users/update_password" \
+    --header "Authorization: Bearer ${DEFAULT_TOKEN}" \
+    --header "Content-Type: application/json" \
+    -d '{
+        "newPassword": "${MILVUS_PASSWORD}",
+        "userName": "root",
+        "password": "Milvus"
+    }'
+    echo "Root Milvus user password updated"
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: milvus-init
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.namespace "name" "milvus-init-job") | nindent 4 }}
+spec:
+  template:
+    spec:
+      containers:
+      - name: milvus-init
+        image: curlimages/curl:latest
+      restartPolicy: Never
+  backoffLimit: 3

@@ -23,4 +23,6 @@ helm upgrade -i infogrep $INFOGREP_CHART_DIR \
     --set AuthService.env.CLIENT_SECRET=$CLIENT_SECRET \
     --set AuthService.env.DOMAIN=$DOMAIN \
     --set AuthService.env.APP_SECRET_KEY=$APP_SECRET_KEY \
-    --set AuthService.env.AUTH_MODE=$AUTH_MODE
+    --set AuthService.env.AUTH_MODE=$AUTH_MODE \
+    --set MilvusConfig.env.password=infogrep123 \
+    --set MilvusConfig.env.rootPassword=rootinfogrep123

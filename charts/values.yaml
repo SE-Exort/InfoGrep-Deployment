@@ -263,6 +263,10 @@ MilvusConfig:
       cpu: 500m
       memory: 512Mi
   pvSize: 5Gi
+  env:
+    username: "infogrep"
+    password: "example"
+    rootPassword: "example"
 
 # -- Elasticsearch Configurations
 ElasticsearchConfig:
