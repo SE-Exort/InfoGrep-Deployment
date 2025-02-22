@@ -7,6 +7,7 @@ metadata:
     {{- include "infogrep.labels" (dict "context" . "component" .Values.namespace "name" "milvus-user-setup-scripts") | nindent 4 }}
 data:
   init-user.sh: |
+    #!/bin/sh
     echo "Running user init script"
     export DEFAULT_TOKEN="root:Milvus"
     curl --request POST \
@@ -14,33 +15,95 @@ data:
     --header "Authorization: Bearer ${DEFAULT_TOKEN}" \
     --header "Content-Type: application/json" \
     -d '{
-        "userName": "${MILVUS_USER}",
-        "password": "${MILVUS_PASSWORD}"
+        "userName": "'"$MILVUS_USER"'",
+        "password": "'"$MILVUS_PASSWORD"'"
     }'
-    echo "Infogrep Milvus user created"
+    echo $'\nInfogrep Milvus user created\n'
     curl --request POST \
     --url "${MILVUS_SERVICE_ENDPOINT}/v2/vectordb/users/update_password" \
     --header "Authorization: Bearer ${DEFAULT_TOKEN}" \
     --header "Content-Type: application/json" \
     -d '{
-        "newPassword": "${MILVUS_PASSWORD}",
+        "newPassword": "'"$MILVUS_ROOT_PASSWORD"'",
         "userName": "root",
         "password": "Milvus"
     }'
-    echo "Root Milvus user password updated"
+    echo $'\nRoot Milvus user password updated'
 ---
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: milvus-init
+  name: milvus-init-user-job
   namespace: {{ .Values.namespace }}
   labels:
-    {{- include "infogrep.labels" (dict "context" . "component" .Values.namespace "name" "milvus-init-job") | nindent 4 }}
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.namespace "name" "milvus-init-user-job") | nindent 4 }}
 spec:
+  parallelism: 1    
+  completions: 1   
+  backoffLimit: 3
   template:
+    metadata:
+      name: milvus-init-user-job
     spec:
+      volumes:
+        - name: user-init-script-vol
+          configMap:
+            defaultMode: 511
+            name: milvus-user-setup-scripts
+      restartPolicy: Never
       containers:
       - name: milvus-init
-        image: curlimages/curl:latest
-      restartPolicy: Never
-  backoffLimit: 3
+        image: alpine/curl:latest
+        command:
+          - /bin/sh
+          - -c
+          - |
+            until curl -fsI http://localhost:15021/healthz/ready; do echo \"Waiting for Sidecar...\"; sleep 3; done;
+            echo "user init scripts mounted"
+            ls /user-init-script
+            /user-init-script/init-user.sh
+            curl -fsI -X POST http://localhost:15020/quitquitquit
+            exit 0
+        volumeMounts:
+          - mountPath: /user-init-script
+            name: user-init-script-vol
+        env:
+          - name: MILVUS_SERVICE_ENDPOINT
+            valueFrom:
+              configMapKeyRef:
+                name: infogrep-service-url-config
+                key: milvusServiceHost
+                optional: false
+          - name: MILVUS_USER
+            valueFrom:
+              secretKeyRef:
+                name: infogrep-milvus-creds
+                key: username
+                optional: false
+          - name: MILVUS_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: infogrep-milvus-creds
+                key: password
+                optional: false
+          - name: MILVUS_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: infogrep-milvus-creds
+                key: rootPassword
+                optional: false
+      initContainers:
+        - name: wait-for-milvus
+          image: busybox:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            [
+              "until echo 'Waiting for milvus standalone...' && nc -vz -w 2 $MILVUS_HOST 19530; do echo 'Looping forever...'; sleep 3; done;",
+            ]
+          env:
+            - name: MILVUS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: infogrep-service-url-config
+                  key: milvusServiceHost
+                  optional: false
