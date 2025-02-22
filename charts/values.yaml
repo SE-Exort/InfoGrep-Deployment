@@ -29,7 +29,7 @@ AiService:
   image:
     repository: ghcr.io/se-exort/ai-service
     pullPolicy: IfNotPresent
-    tag: latest
+    tag: stub-2
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
