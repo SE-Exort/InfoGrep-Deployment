@@ -1,0 +1,34 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: "{{ .Values.MilvusEtcdConfig.persistence.volumeName }}-1"
+  namespace: {{ .Values.namespace }}
+{{- with .Values.MilvusEtcdConfig.persistence.annotations  }}
+  annotations:
+    {{ toYaml . | indent 4 }}
+{{- end }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" (printf "%s-%s" .Values.MilvusEtcdConfig.persistence.volumeName "1") "name" (printf "%s-%s" .Values.MilvusEtcdConfig.persistence.volumeName "1")) | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.MilvusEtcdConfig.persistence.storageClass }}
+  persistentVolumeReclaimPolicy: {{ .Values.MilvusEtcdConfig.persistence.persistentVolumeReclaimPolicy }}
+  capacity:
+    storage: {{ .Values.MilvusEtcdConfig.persistence.size }}
+  {{- with .Values.MilvusEtcdConfig.persistence.accessModes }}
+  accessModes:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- if eq .Values.MilvusEtcdConfig.persistence.storageClass "manual" }}
+  hostPath:
+    path: "/usr/src"
+  {{- else if eq .Values.MilvusEtcdConfig.persistence.storageClass "local-storage" }}
+  local:
+    path: "/usr/src"
+  {{- with .Values.MilvusEtcdConfig.persistence.nodeAffinity}}
+  nodeAffinity:
+    {{- toYaml . | nindent 4}}
+  {{- end }}
+  {{- end }}
+  claimRef:
+    namespace: {{ .Values.namespace }}
+    name: "data-{{ template "infogrep.milvus.fullname" . }}-etcd-0"

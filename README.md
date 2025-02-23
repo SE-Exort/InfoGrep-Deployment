@@ -16,7 +16,8 @@ Helm Charts for deploying InfoGrep
 
 ### Setup Steps
 
-1. `minikube start --cpus max --memory max` to start a k8s cluster with the maximum resource.
+1. Start a single node cluster with `minikube start --cpus max --memory max`, this is recommended to members that does not have too much compute resource available on there machine
+   1. For the ones that want to try a multi-node cluster, run `minikube start --cpus 2 --memory 5120 --disk-size 20gb -n 3` to spin up a 3 node cluster, note that you will need at least 15G memory, 6 cpu cores, and 60G storage free to allocate, they won't all necessarily get used.
 2. `ollama serve` to start ollama.
 3. Create the `.env` file from the `.env.template` file with `cp .env.template .env`. Fill out the mandatory env vars with an appropriate value. If you are not sure what to put in, reach out to @TyroneHe-0926.
 4. Run the setup script with `bash setup.sh`.
