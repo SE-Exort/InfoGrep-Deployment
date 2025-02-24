@@ -38,6 +38,7 @@ metadata:
   labels:
     {{- include "infogrep.labels" (dict "context" . "component" .Values.namespace "name" "milvus-init-user-job") | nindent 4 }}
 spec:
+  ttlSecondsAfterFinished: 60
   parallelism: 1    
   completions: 1   
   backoffLimit: 3
