@@ -29,7 +29,7 @@ AiService:
   image:
     repository: ghcr.io/se-exort/ai-service
     pullPolicy: IfNotPresent
-    tag: latest
+    tag: stub-2
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -276,8 +276,7 @@ MilvusConfig:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                  - minikube
-                  - minikube-m02
+                  - hahafhaharpi2
   env:
     username: "infogrep"
     password: "example"
@@ -309,8 +308,7 @@ MilvusEtcdConfig:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                  - minikube
-                  - minikube-m02
+                  - hahafhaharpi2
 
 # -- Elasticsearch Configurations
 ElasticsearchConfig:
@@ -340,8 +338,7 @@ ElasticsearchConfig:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                  - minikube
-                  - minikube-m03
+                  - hahafhaharpi3
 
 # -- Kibana Configurations
 KibanaConfig:
@@ -396,8 +393,7 @@ InfogrepPostgres:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                  - minikube-m02
-                  - minikube
+                  - hahafhaharpi4
   # -- K8s Service Configuration
   service:
     annotations: {}

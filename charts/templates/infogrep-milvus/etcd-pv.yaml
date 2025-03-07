@@ -20,10 +20,10 @@ spec:
   {{- end }}
   {{- if eq .Values.MilvusEtcdConfig.persistence.storageClass "manual" }}
   hostPath:
-    path: "/usr/src"
+    path: "/home/hahafhaha/InfogrepData/milvus/etcd"
   {{- else if eq .Values.MilvusEtcdConfig.persistence.storageClass "local-storage" }}
   local:
-    path: "/usr/src"
+    path: "/home/hahafhaha/InfogrepData/milvus/etcd"
   {{- with .Values.MilvusEtcdConfig.persistence.nodeAffinity}}
   nodeAffinity:
     {{- toYaml . | nindent 4}}

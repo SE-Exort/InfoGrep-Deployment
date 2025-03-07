@@ -20,10 +20,10 @@ spec:
   {{- end }}
   {{- if eq .Values.MilvusConfig.persistence.storageClass "manual" }}
   hostPath:
-    path: "/usr/local/include"
+    path: "/home/hahafhaha/InfogrepData/milvus/minio"
   {{- else if eq .Values.MilvusConfig.persistence.storageClass "local-storage" }}
   local:
-    path: "/usr/local/include"
+    path: "/home/hahafhaha/InfogrepData/milvus/minio"
   {{- with .Values.MilvusConfig.persistence.nodeAffinity}}
   nodeAffinity:
     {{- toYaml . | nindent 4}}
