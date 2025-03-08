@@ -26,3 +26,5 @@ helm upgrade -i infogrep $INFOGREP_CHART_DIR \
     --set AuthService.env.AUTH_MODE=$AUTH_MODE \
     --set MilvusConfig.env.password=infogrep123 \
     --set MilvusConfig.env.rootPassword=rootinfogrep123
+
+kubectl create secret docker-registry ghcr --docker-server=ghcr.io --docker-username=$GHCR_USER --docker-password=$GHCR_PASSWORD --docker-email=$GHCR_EMAIL -n infogrep

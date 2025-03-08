@@ -67,8 +67,8 @@ istioctl install -f "${INFOGREP_CHART_DIR}/monitoring/tracing.yaml" --skip-confi
 kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/mesh-default-tracing.yaml"
 
 # installing Grafana & Prometheus
-kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/prometheus.yaml"
-kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/grafana.yaml"
+# kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/prometheus.yaml"
+# kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/grafana.yaml"
 
 # installing kiali
 kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/kiali.yaml"

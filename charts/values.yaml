@@ -29,7 +29,7 @@ AiService:
   image:
     repository: ghcr.io/se-exort/ai-service
     pullPolicy: IfNotPresent
-    tag: stub-2
+    tag: rpi
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -108,7 +108,7 @@ AuthService:
   image:
     repository: ghcr.io/se-exort/auth-service
     pullPolicy: IfNotPresent
-    tag: latest
+    tag: rpi
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -162,7 +162,7 @@ ChatroomService:
   image:
     repository: ghcr.io/se-exort/chatroom-service
     pullPolicy: IfNotPresent
-    tag: latest
+    tag: rpi
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -210,7 +210,7 @@ FileManagementService:
   image:
     repository: ghcr.io/se-exort/file-management-service
     pullPolicy: IfNotPresent
-    tag: latest
+    tag: rpi
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
