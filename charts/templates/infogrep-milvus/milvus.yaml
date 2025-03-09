@@ -25,13 +25,12 @@ spec:
           persistence:
             enabled: true
             storageClass: {{ .Values.MilvusEtcdConfig.persistence.storageClass }}
-            VolumeName: "{{ .Values.MilvusEtcdConfig.persistence.volumeName }}-1"
             size: {{ .Values.MilvusEtcdConfig.persistence.size }}
             {{- with .Values.MilvusEtcdConfig.persistence.accessModes }}
             accessModes:
             {{- toYaml . | nindent 12 }}
             {{- end }}
-        deletionPolicy: Retain
+        deletionPolicy: Delete
         pvcDeletion: false
     storage:
       inCluster:
@@ -42,12 +41,9 @@ spec:
           persistence:
             enabled: true
             storageClass: {{ .Values.MilvusConfig.persistence.storageClass }}
-            VolumeName: "{{ .Values.MilvusConfig.persistence.volumeName }}-1"
             size: {{ .Values.MilvusConfig.persistence.size }}
             {{- with .Values.MilvusConfig.persistence.accessModes }}
             accessModes:
             {{- toYaml . | nindent 12 }}
             {{- end }}
-        deletionPolicy: Retain
-        pvcDeletion: false
  

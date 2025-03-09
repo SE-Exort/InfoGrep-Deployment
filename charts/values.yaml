@@ -29,7 +29,7 @@ AiService:
   image:
     repository: ghcr.io/se-exort/ai-service
     pullPolicy: IfNotPresent
-    tag: latest
+    tag: stub-2
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -46,16 +46,16 @@ AiService:
   # -- Resource Limits
   resources:
     limits:
-      cpu: 500m
+      cpu: 150m
       memory: 1Gi
     requests:
-      cpu: 500m
+      cpu: 100m
       memory: 512Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
     labels: {}
-    type: LoadBalancer
+    type: ClusterIP
     nodePortHttp: 30080
     servicePortHttp: 8004
     targetPortHttp: 8004
@@ -125,10 +125,10 @@ AuthService:
   # -- Resource Limits
   resources:
     limits:
-      cpu: 500m
+      cpu: 150m
       memory: 512Mi
     requests:
-      cpu: 500m
+      cpu: 100m
       memory: 128Mi
   env:
     CLIENT_ID: ""
@@ -140,7 +140,7 @@ AuthService:
   service:
     annotations: {}
     labels: {}
-    type: LoadBalancer
+    type: ClusterIP
     nodePortHttp: 30081
     servicePortHttp: 4000
     targetPortHttp: 4000
@@ -179,16 +179,16 @@ ChatroomService:
   # -- Resource Limits
   resources:
     limits:
-      cpu: 500m
+      cpu: 150m
       memory: 512Mi
     requests:
-      cpu: 500m
+      cpu: 100m
       memory: 128Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
     labels: {}
-    type: LoadBalancer
+    type: ClusterIP
     nodePortHttp: 30084
     servicePortHttp: 8003
     targetPortHttp: 8003
@@ -227,16 +227,16 @@ FileManagementService:
   # -- Resource Limits
   resources:
     limits:
-      cpu: 500m
+      cpu: 150m
       memory: 512Mi
     requests:
-      cpu: 500m
+      cpu: 100m
       memory: 128Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
     labels: {}
-    type: LoadBalancer
+    type: ClusterIP
     nodePortHttp: 30086
     servicePortHttp: 8002
     targetPortHttp: 8002
@@ -259,16 +259,16 @@ MilvusConfig:
       cpu: 500m
       memory: 1Gi
     requests:
-      cpu: 500m
+      cpu: 250m
       memory: 512Mi
   persistence:
     volumeName: infogrep-milvus-pv
     mountPath: "/export"
-    storageClass: local-storage
-    size: 5Gi
+    storageClass: csi-cinder-high-speed
+    size: 3Gi
     accessModes:
       - ReadWriteOnce
-    persistentVolumeReclaimPolicy: Retain
+    persistentVolumeReclaimPolicy: Delete
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -276,8 +276,7 @@ MilvusConfig:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                  - minikube
-                  - minikube-m02
+                  - nodepool-c3033ca4-523c-4377-8d-node-68ce5c
   env:
     username: "infogrep"
     password: "example"
@@ -292,16 +291,16 @@ MilvusEtcdConfig:
       cpu: 500m
       memory: 1Gi
     requests:
-      cpu: 500m
+      cpu: 350m
       memory: 512Mi
   persistence:
     volumeName: infogrep-milvus-etcd-pv
     mountPath: ""
-    storageClass: local-storage
+    storageClass: csi-cinder-high-speed
     size: 5Gi
     accessModes:
       - ReadWriteOnce
-    persistentVolumeReclaimPolicy: Retain
+    persistentVolumeReclaimPolicy: Delete
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -309,8 +308,7 @@ MilvusEtcdConfig:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                  - minikube
-                  - minikube-m02
+                  - nodepool-c3033ca4-523c-4377-8d-node-68ce5c
 
 # -- Elasticsearch Configurations
 ElasticsearchConfig:
@@ -328,11 +326,11 @@ ElasticsearchConfig:
   persistence:
     volumeName: infogrep-logging-es-pv
     mountPath: "/usr/share/elasticsearch/data"
-    storageClass: local-storage
+    storageClass: csi-cinder-high-speed
     size: 5Gi
     accessModes:
       - ReadWriteOnce
-    persistentVolumeReclaimPolicy: Retain
+    persistentVolumeReclaimPolicy: Delete
     nodeAffinity:
       required:
         nodeSelectorTerms:
@@ -340,21 +338,20 @@ ElasticsearchConfig:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                  - minikube
-                  - minikube-m03
+                  - nodepool-c3033ca4-523c-4377-8d-node-6ac736
 
 # -- Kibana Configurations
 KibanaConfig:
   name: kibana
   replicaCount: 1
-  serviceType: LoadBalancer
+  serviceType: ClusterIP
   defaultPodSpec: "false"
   resources:
     limits:
       cpu: 1
       memory: 1Gi
     requests:
-      cpu: 500m
+      cpu: 150m
       memory: 1Gi
 
 # -- Infogrep Postgres Configurations
@@ -375,7 +372,7 @@ InfogrepPostgres:
       cpu: 1
       memory: 2Gi
     requests:
-      cpu: 500m
+      cpu: 250m
       memory: 1Gi
   # -- Container Ports
   containerPorts:
@@ -384,9 +381,9 @@ InfogrepPostgres:
   persistence:
     volumeName: infogrep-postgres-pv
     mountPath: "/var/lib/postgresql/data"
-    storageClass: local-storage
+    storageClass: csi-cinder-high-speed
     size: 3Gi
-    persistentVolumeReclaimPolicy: Retain
+    persistentVolumeReclaimPolicy: Delete
     accessModes:
       - ReadWriteOnce
     nodeAffinity:
@@ -396,8 +393,7 @@ InfogrepPostgres:
               - key: kubernetes.io/hostname
                 operator: In
                 values:
-                  - minikube-m02
-                  - minikube
+                  - nodepool-c3033ca4-523c-4377-8d-node-c24533
   # -- K8s Service Configuration
   service:
     annotations: {}

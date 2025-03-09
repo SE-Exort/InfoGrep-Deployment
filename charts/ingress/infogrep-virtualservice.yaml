@@ -1,0 +1,55 @@
+apiVersion: networking.istio.io/v1
+kind: VirtualService
+metadata:
+  name: infogrep-virtual-service
+  namespace: infogrep
+spec:
+  hosts:
+  - "infogrep.ca"
+  gateways:
+  - infogrep-gateway
+  http:
+  - name: "ai-service-routes"
+    match:
+    - uri:
+        prefix: "/ai/"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 8004
+        host: infogrep-ai-service
+  - name: "auth-service-routes"
+    match:
+    - uri:
+        prefix: "/auth/"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 4000
+        host: infogrep-auth-service
+  - name: "chatroom-service-routes"
+    match:
+    - uri:
+        prefix: "/chatroom/"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 8003
+        host: infogrep-chatroom-service
+  - name: "fms-service-routes"
+    match:
+    - uri:
+        prefix: "/fms/"
+    rewrite:
+      uri: "/"
+    route:
+    - destination:
+        port:
+          number: 8002
+        host: infogrep-file-management-service

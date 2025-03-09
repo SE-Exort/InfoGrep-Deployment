@@ -1,7 +1,7 @@
-apiVersion: storage.k8s.io/v1
-kind: StorageClass
-metadata:
-  name: local-storage
-  namespace: {{ .Values.namespace }}
-provisioner: kubernetes.io/no-provisioner # indicates that this StorageClass does not support automatic provisioning
-volumeBindingMode: WaitForFirstConsumer
+# apiVersion: storage.k8s.io/v1
+# kind: StorageClass
+# metadata:
+#   name: csi-cinder-high-speed
+#   namespace: {{ .Values.namespace }}
+# provisioner: kubernetes.io/no-provisioner # indicates that this StorageClass does not support automatic provisioning
+# volumeBindingMode: WaitForFirstConsumer
