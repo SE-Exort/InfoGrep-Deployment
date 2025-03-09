@@ -54,6 +54,7 @@ CNPG_OPERATOR_CHART_DIR="./cloudnative-pg-charts"
 
 # adding helm repos
 helm repo add istio https://istio-release.storage.googleapis.com/charts
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
 helm repo update
 
 # installing istio
@@ -69,6 +70,7 @@ kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/mesh-default-tracing.yaml"
 # installing Grafana & Prometheus
 # kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/prometheus.yaml"
 # kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/grafana.yaml"
+# helm upgrade --install kube-prometheus-stack prometheus-community/kube-prometheus-stack -f rpi-cluster-monitor.yaml
 
 # installing kiali
 kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/kiali.yaml"
