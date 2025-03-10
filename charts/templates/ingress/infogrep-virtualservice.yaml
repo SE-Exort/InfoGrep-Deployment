@@ -53,3 +53,13 @@ spec:
         port:
           number: 8002
         host: infogrep-file-management-service
+  - name: "kibana-routes"
+    match:
+    - uri:
+        port: https
+        prefix: /
+    route:
+    - destination:
+        host: infogrep-kibana-kb-http
+        port:
+          number: 5601

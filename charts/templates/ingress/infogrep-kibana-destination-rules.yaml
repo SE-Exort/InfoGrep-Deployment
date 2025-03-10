@@ -1,0 +1,15 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: infogrep-kibana
+  namespace: infogrep
+spec:
+  host: infogrep-kibana-kb-http
+  trafficPolicy:
+    tls:
+      mode: SIMPLE
+    portLevelSettings:
+    - port:
+        number: 443
+      loadBalancer:
+        simple: LEAST_CONN
