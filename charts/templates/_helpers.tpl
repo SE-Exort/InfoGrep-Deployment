@@ -59,13 +59,9 @@
 {{- printf "%s-%s" (include "infogrep.fullname" .) .Values.MilvusConfig.name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-# {{- define "infogrep.milvus.serviceAccountName" -}}
-# {{- if .Values.VectorMilvus.serviceAccount.create -}}
-#     {{ default (include "infogrep.vectorMilvus.fullname" .) .Values.VectorMilvus.serviceAccount.name }}
-# {{- else -}}
-#     {{ default "default" .}}
-# {{- end -}}
-# {{- end -}}
+{{- define "infogrep.frontend.fullname" -}}
+{{- printf "%s-%s" (include "infogrep.fullname" .) .Values.InfogrepFrontend.name | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
 
 {{- define "infogrepClientCertVolumeMounts" -}}
 - name: infogrep-internal-client-certs-elasticsearch

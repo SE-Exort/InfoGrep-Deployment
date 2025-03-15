@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "infogrep.frontend.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.InfogrepFrontend.name "name" .Values.InfogrepFrontend.name) | nindent 4 }}
+    {{- with .Values.InfogrepFrontend.service.labels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+  {{- with .Values.InfogrepFrontend.service.annotations }}
+  annotations:
+    {{- range $key, $value := . }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+  {{- end }}
+spec:
+  type: {{ .Values.InfogrepFrontend.service.type }}
+  selector:
+    {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.InfogrepFrontend.name) | nindent 4 }}
+  ports:
+    - name: {{ .Values.InfogrepFrontend.service.servicePortHttpName }}
+      protocol: TCP
+      port: {{ .Values.InfogrepFrontend.service.servicePortHttp }}
+      targetPort: {{ .Values.InfogrepFrontend.containerPorts.server }}
+      {{- if eq .Values.InfogrepFrontend.service.type "NodePort" }}
+      nodePort: {{ .Values.InfogrepFrontend.service.nodePortHttp }}
+      {{- end }}

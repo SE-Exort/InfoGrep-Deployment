@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "infogrep.frontend.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.InfogrepFrontend.name "name" .Values.InfogrepFrontend.name) | nindent 4 }}
+spec:
+  {{- if .Values.InfogrepFrontend.replicaCount }}
+  replicas: {{ .Values.InfogrepFrontend.replicaCount }}
+  {{- else }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.InfogrepFrontend.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.InfogrepFrontend.name "name" .Values.InfogrepFrontend.name) | nindent 8 }}
+    spec:
+    {{- with .Values.InfogrepFrontend.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      containers:
+        - name: {{ .Values.InfogrepFrontend.name }}
+          env:
+            {{- include "defaultEnv" . | nindent 12 }}
+          image: "{{ .Values.InfogrepFrontend.image.repository }}:{{ .Values.InfogrepFrontend.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.InfogrepFrontend.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.InfogrepFrontend.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.InfogrepFrontend.containerPorts.server }}

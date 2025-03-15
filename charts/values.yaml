@@ -414,3 +414,44 @@ InfogrepPostgres:
   env:
     username: postgres
     password: example
+
+# -- Infogrep Frontend Configs
+InfogrepFrontend:
+  name: frontend
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: nginx
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- GHCR Image Pull Secret
+  imagePullSecrets:
+    - name: ghcr
+  # -- Container Ports
+  containerPorts:
+    server: 80
+  # -- Resource Limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: LoadBalancer
+    nodePortHttp: 30099
+    servicePortHttp: 80
+    targetPortHttp: 80
+    servicePortHttpName: http
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
