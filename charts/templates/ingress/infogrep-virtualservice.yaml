@@ -5,7 +5,7 @@ metadata:
   namespace: infogrep
 spec:
   hosts:
-  - "infogrep.ca"
+  - "api.infogrep.ca"
   gateways:
   - infogrep-gateway
   http:

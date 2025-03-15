@@ -422,7 +422,7 @@ InfogrepFrontend:
   namespace: ""
   # -- GHCR Config
   image:
-    repository: nginx
+    repository: ghcr.io/se-exort/frontend
     pullPolicy: IfNotPresent
     tag: latest
   # -- GHCR Image Pull Secret
@@ -430,15 +430,15 @@ InfogrepFrontend:
     - name: ghcr
   # -- Container Ports
   containerPorts:
-    server: 80
+    server: 3000
   # -- Resource Limits
   resources:
     limits:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 250m
+      memory: 2Gi
     requests:
-      cpu: 500m
-      memory: 512Mi
+      cpu: 100m
+      memory: 1.5Gi
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -446,7 +446,7 @@ InfogrepFrontend:
     type: LoadBalancer
     nodePortHttp: 30099
     servicePortHttp: 80
-    targetPortHttp: 80
+    targetPortHttp: 3000
     servicePortHttpName: http
     servicePortHttpsAppProtocol: ""
     loadBalancerClass: ""
