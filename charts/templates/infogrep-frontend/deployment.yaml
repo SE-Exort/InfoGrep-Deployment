@@ -27,7 +27,7 @@ spec:
         - name: {{ .Values.InfogrepFrontend.name }}
           env:
             {{- include "defaultEnv" . | nindent 12 }}
-            - name: INFOGREP_APP_ENV
+            - name: REACT_APP_INFOGREP_ENV
               value: "production"
           image: "{{ .Values.InfogrepFrontend.image.repository }}:{{ .Values.InfogrepFrontend.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.InfogrepFrontend.image.pullPolicy }}
