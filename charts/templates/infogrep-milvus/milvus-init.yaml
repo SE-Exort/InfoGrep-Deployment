@@ -10,6 +10,7 @@ data:
     #!/bin/sh
     echo "Running user init script"
     export DEFAULT_TOKEN="root:Milvus"
+
     curl --request POST \
     --url "${MILVUS_SERVICE_ENDPOINT}/v2/vectordb/users/create" \
     --header "Authorization: Bearer ${DEFAULT_TOKEN}" \
@@ -18,7 +19,20 @@ data:
         "userName": "'"$MILVUS_USER"'",
         "password": "'"$MILVUS_PASSWORD"'"
     }'
+
     echo $'\nInfogrep Milvus user created\n'
+
+    curl --request POST \
+    --url "${MILVUS_SERVICE_ENDPOINT}/v2/vectordb/users/grant_role" \
+    --header "Authorization: Bearer ${DEFAULT_TOKEN}" \
+    --header "Content-Type: application/json" \
+    -d '{
+        "roleName": "admin",
+        "userName": "'"$MILVUS_USER"'"
+    }'
+
+    echo $'\nGranted admin role for infogrep user'
+    
     curl --request POST \
     --url "${MILVUS_SERVICE_ENDPOINT}/v2/vectordb/users/update_password" \
     --header "Authorization: Bearer ${DEFAULT_TOKEN}" \
@@ -28,6 +42,7 @@ data:
         "userName": "root",
         "password": "Milvus"
     }'
+
     echo $'\nRoot Milvus user password updated'
 ---
 apiVersion: batch/v1
