@@ -28,7 +28,7 @@ AiService:
   # -- GHCR Config
   image:
     repository: ghcr.io/se-exort/ai-service
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
@@ -88,7 +88,7 @@ AiService:
   ollamaCreate: "true"
   ollamaImage:
     repository: ollama/ollama
-    pullPolicy: Always
+    pullPolicy: IfNotPresent
     tag: latest
     ports: 11434
     resources:
@@ -107,7 +107,7 @@ AuthService:
   # -- GHCR Config
   image:
     repository: ghcr.io/se-exort/auth-service
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
@@ -155,13 +155,14 @@ AuthService:
 
 # -- Chatroom Service Config
 ChatroomService:
+  replicaCount: 2
   name: chatroom-service
   # -- Default namespace
   namespace: ""
   # -- GHCR Config
   image:
     repository: ghcr.io/se-exort/chatroom-service
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
@@ -203,13 +204,14 @@ ChatroomService:
 
 # -- File Management Service Config
 FileManagementService:
+  replicaCount: 2
   name: file-management-service
   # -- Default namespace
   namespace: ""
   # -- GHCR Config
   image:
     repository: ghcr.io/se-exort/file-management-service
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
