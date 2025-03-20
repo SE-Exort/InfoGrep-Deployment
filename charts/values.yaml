@@ -423,7 +423,7 @@ InfogrepFrontend:
   # -- GHCR Config
   image:
     repository: ghcr.io/se-exort/frontend
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
     tag: latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
