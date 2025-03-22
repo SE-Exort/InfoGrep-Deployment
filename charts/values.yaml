@@ -97,7 +97,7 @@ AiService:
         memory: 8Gi
       requests:
         cpu: 2
-        memory: 8Gi
+        memory: 2Gi
 
 # -- Authentication Service Config
 AuthService:
