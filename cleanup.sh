@@ -36,3 +36,8 @@ kubectl delete crds telemetries.telemetry.istio.io
 kubectl delete crds virtualservices.networking.istio.io
 kubectl delete crds wasmplugins.extensions.istio.io
 kubectl delete crds workloadentries.networking.istio.io
+kubectl delete crds milvuses.milvus.io
+kubectl delete ns cnpg-system
+kubectl delete ns elastic-system
+kubectl delete ns milvus-operator
+kubectl delete ns istio-system
