@@ -155,7 +155,7 @@ AuthService:
 
 # -- Chatroom Service Config
 ChatroomService:
-  replicaCount: 2
+  replicaCount: 1
   name: chatroom-service
   # -- Default namespace
   namespace: ""
@@ -183,8 +183,8 @@ ChatroomService:
       cpu: 500m
       memory: 512Mi
     requests:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 500m
+      memory: 512Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
@@ -204,7 +204,7 @@ ChatroomService:
 
 # -- File Management Service Config
 FileManagementService:
-  replicaCount: 2
+  replicaCount: 1
   name: file-management-service
   # -- Default namespace
   namespace: ""
@@ -232,8 +232,8 @@ FileManagementService:
       cpu: 500m
       memory: 512Mi
     requests:
-      cpu: 200m
-      memory: 256Mi
+      cpu: 500m
+      memory: 512Mi
   # -- K8s Service Configuration
   service:
     annotations: {}
