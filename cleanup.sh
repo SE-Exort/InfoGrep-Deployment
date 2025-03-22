@@ -1,3 +1,9 @@
+helm delete infogrep
+helm delete cnpg -n cnpg-system
+helm delete elastic-operator -n elastic-system
+helm delete milvus-operator -n milvus-operator
+helm delete istio-base -n istio-system
+helm delete istiod -n istio-system
 kubectl delete crds agents.agent.k8s.elastic.co
 kubectl delete crds apmservers.apm.k8s.elastic.co
 kubectl delete crds authorizationpolicies.security.istio.io
