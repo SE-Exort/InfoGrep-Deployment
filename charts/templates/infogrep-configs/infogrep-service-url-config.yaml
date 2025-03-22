@@ -11,4 +11,4 @@ data:
   chatroomServiceHost: "{{ template "infogrep.chatroomService.fullname" . }}:{{ .Values.ChatroomService.service.servicePortHttp }}"
   fileManagementServiceHost: "{{ template "infogrep.fileManagementService.fullname" . }}:{{ .Values.FileManagementService.service.servicePortHttp }}"
   milvusServiceHost: "{{ template "infogrep.milvus.fullname" . }}-milvus:19530"
-  ollamaServiceHost: "host.minikube.internal:11434"
+  ollamaServiceHost: "localhost:11434"

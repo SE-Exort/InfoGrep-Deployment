@@ -39,6 +39,18 @@ spec:
                   name: openai-secrets
                   key: openaiKey
                   optional: true
+            - name: INFOGREP_MILVUS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: infogrep-milvus-creds
+                  key: username
+                  optional: false
+            - name: INFOGREP_MILVUS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: infogrep-milvus-creds
+                  key: password
+                  optional: false
           image: "{{ .Values.AiService.image.repository }}:{{ .Values.AiService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.AiService.image.pullPolicy }}
           resources:
