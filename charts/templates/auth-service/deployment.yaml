@@ -59,12 +59,18 @@ spec:
                   name: auth-service-secret
                   key: app_secret_key
                   optional: true
-            - name: AUTH_MODE
+            - name: REDIRECT_URI
               valueFrom:
                 secretKeyRef:
                   name: auth-service-secret
-                  key: auth_mode
-                  optional: false
+                  key: redirect_uri
+                  optional: true
+            - name: FRONTEND_LOGIN_URI
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: frontend_login_uri
+                  optional: true
           image: "{{ .Values.AuthService.image.repository }}:{{ .Values.AuthService.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.AuthService.image.pullPolicy }}
           resources:

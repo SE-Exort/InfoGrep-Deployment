@@ -135,7 +135,8 @@ AuthService:
     CLIENT_SECRET: "" 
     DOMAIN: ""
     APP_SECRET_KEY: ""
-    AUTH_MODE: ""
+    REDIRECT_URI: ""
+    FRONTEND_LOGIN_URI: ""
   # -- K8s Service Configuration
   service:
     annotations: {}
