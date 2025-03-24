@@ -20,6 +20,7 @@ spec:
         port:
           number: 8004
         host: infogrep-ai-service
+    timeout: 300s
   - name: "auth-service-routes"
     match:
     - uri:
@@ -31,6 +32,7 @@ spec:
         port:
           number: 4000
         host: infogrep-auth-service
+    timeout: 300s
   - name: "chatroom-service-routes"
     match:
     - uri:
@@ -42,6 +44,7 @@ spec:
         port:
           number: 8003
         host: infogrep-chatroom-service
+    timeout: 300s
   - name: "fms-service-routes"
     match:
     - uri:
@@ -53,6 +56,7 @@ spec:
         port:
           number: 8002
         host: infogrep-file-management-service
+    timeout: 300s
   - name: "kibana-routes"
     match:
     - uri:
@@ -63,3 +67,4 @@ spec:
         host: infogrep-kibana-kb-http
         port:
           number: 5601
+    timeout: 300s
