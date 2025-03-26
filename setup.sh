@@ -32,12 +32,20 @@ set +a
 echo "Environment variables loaded from $ENV_FILE."
 
 # check required env var
-check_envvar OPENAI_KEY required
-check_envvar GHCR_USER required
-check_envvar GHCR_PASSWORD required
-check_envvar GHCR_EMAIL required
-check_envvar SERPAPI_KEY optional
+check_envvar MILVUS_USER_PASSWORD required
+check_envvar MILVUS_ROOT_PASSWORD required
+check_envvar POSTGRES_ROOT_PASSWORD required
+
+check_envvar OPENAI_KEY optional
+check_envvar GHCR_USER optional
+check_envvar GHCR_PASSWORD optional
+check_envvar GHCR_EMAIL optional
 check_envvar CLIENT_ID optional
+check_envvar CLIENT_SECRET optional
+check_envvar DOMAIN optional
+check_envvar APP_SECRET_KEY optional
+check_envvar REDIRECT_URI optional
+check_envvar FRONTEND_LOGIN_URI optional
 
 # check istioctl is installed
 if ! command -v istioctl 2>&1 >/dev/null
@@ -85,13 +93,15 @@ helm install cnpg $CNPG_OPERATOR_CHART_DIR -n cnpg-system --create-namespace --w
 # install charts
 helm install infogrep $INFOGREP_CHART_DIR \
     --set KeyConfig.openaiKey=$OPENAI_KEY \
-    --set KeyConfig.serpapiKey=$SERPAPI_KEY \
     --set AuthService.env.CLIENT_ID=$CLIENT_ID \
     --set AuthService.env.CLIENT_SECRET=$CLIENT_SECRET \
     --set AuthService.env.DOMAIN=$DOMAIN \
     --set AuthService.env.APP_SECRET_KEY=$APP_SECRET_KEY \
-    --set MilvusConfig.env.password=infogrep123 \
-    --set MilvusConfig.env.rootPassword=rootinfogrep123
+    --set MilvusConfig.env.password=$MILVUS_USER_PASSWORD \
+    --set MilvusConfig.env.rootPassword=$MILVUS_ROOT_PASSWORD \
+    --set AuthService.env.REDIRECT_URI=$REDIRECT_URI \
+    --set AuthService.env.FRONTEND_LOGIN_URI=$FRONTEND_LOGIN_URI \
+    --set InfogrepPostgres.env.password=$POSTGRES_ROOT_PASSWORD
 
 # create ghcr image pull secret
 kubectl create secret docker-registry ghcr --docker-server=ghcr.io --docker-username=$GHCR_USER --docker-password=$GHCR_PASSWORD --docker-email=$GHCR_EMAIL -n infogrep
