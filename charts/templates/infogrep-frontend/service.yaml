@@ -1,3 +1,4 @@
+{{- if eq .Values.deploymentType "cloud" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -26,3 +27,4 @@ spec:
       {{- if eq .Values.InfogrepFrontend.service.type "NodePort" }}
       nodePort: {{ .Values.InfogrepFrontend.service.nodePortHttp }}
       {{- end }}
+{{- end }}
