@@ -15,6 +15,7 @@ apiVersionOverrides: {}
 replicaCount: 1
 namespace: infogrep
 domain: local.infogrep.ai
+deploymentType: local
 
 KeyConfig:
   openaiKey: ""
@@ -67,25 +68,8 @@ AiService:
     externalIPs: []
     externalTrafficPolicy: Cluster
     sessionAffinity: None
-  # -- Ingress configuration
-  ingress:
-    enabled: true
-    controller: generic
-    labels: {}
-    annotations:
-      nginx.ingress.kubernetes.io/use-regex: "true"
-      kubernetes.io/ingress.class: "nginx"
-    ingressClassName: nginx
-    hostname: ""
-    path: /
-    pathType: Prefix
-    tls: false
-    extraHosts: []
-    extraPaths: []
-    extraRules: []
-    extraTls: []
   # -- Ollama Container Configuration
-  ollamaCreate: "true"
+  ollamaCreate: "false"
   ollamaImage:
     repository: ollama/ollama
     pullPolicy: IfNotPresent

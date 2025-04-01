@@ -1,21 +1,35 @@
 #!/bin/bash
 
 function check_envvar {
-    local param1=$1
-    local param2=$2
+    local envvar=$1
+    local vartype=$2
 
-    if [ -z "${!param1}" ]; then
-        if [ "$param2" == "required" ]; then
-            echo "Error: $param1 is required but not set. Exiting..."
+    if [ -z "${!envvar}" ]; then
+        if [ "$vartype" == "required" ]; then
+            echo "Error: $envvar is required but not set. Exiting..."
             exit 1
         else
-            export $param1="EMPTY"
-            echo "$param1 optional and not set, default to empty "
+            export $envvar="EMPTY"
+            echo "$envvar optional and not set, default to empty "
         fi
     else
-        echo "$param1 is set."
+        echo "$envvar is set."
     fi
 }
+
+function check_boolean {
+    local var_name=$1
+    local var_value=${!var_name}
+    
+    var_value=$(echo "$var_value" | tr '[:upper:]' '[:lower:]')
+    
+    if [[ "$var_value" == "true" || "$var_value" == "1" || "$var_value" == "yes" || "$var_value" == "y" ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 ENV_FILE=".env"
 
 # Check if the .env file exists
@@ -35,6 +49,7 @@ echo "Environment variables loaded from $ENV_FILE."
 check_envvar MILVUS_USER_PASSWORD required
 check_envvar MILVUS_ROOT_PASSWORD required
 check_envvar POSTGRES_ROOT_PASSWORD required
+check_envvar DTYPE required
 
 check_envvar OPENAI_KEY optional
 check_envvar GHCR_USER optional
@@ -69,16 +84,31 @@ helm install istiod istio/istiod -n istio-system --wait --version 1.24.2
 kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/mtls.yaml"
 
 # installing Jaegar
-kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/jaegar.yaml"
-istioctl install -f "${INFOGREP_CHART_DIR}/monitoring/tracing.yaml" --skip-confirmation
-kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/mesh-default-tracing.yaml"
+if check_boolean ENABLE_JAEGER; then
+    echo "Installing Jaeger..."
+    kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/jaegar.yaml"
+    istioctl install -f "${INFOGREP_CHART_DIR}/monitoring/tracing.yaml" --skip-confirmation
+    kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/mesh-default-tracing.yaml"
+else
+    echo "Skipping Jaeger installation"
+fi
 
 # installing Grafana & Prometheus
-kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/prometheus.yaml"
-kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/grafana.yaml"
+if check_boolean ENABLE_INFOGREP_METRICS; then
+    echo "Installing Prometheus and Grafana..."
+    kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/prometheus.yaml"
+    kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/grafana.yaml"
+else
+    echo "Skipping Prometheus and Grafana installation"
+fi
 
 # installing kiali
-kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/kiali.yaml"
+if check_boolean ENABLE_KIALI; then
+    echo "Installing Kiali..."
+    kubectl apply -f "${INFOGREP_CHART_DIR}/monitoring/kiali.yaml"
+else
+    echo "Skipping Kiali installation (ENABLE_KIALI not enabled)"
+fi
 
 # installing the ELK operator
 helm install elastic-operator $ECK_OPERATOR_CHART_DIR -n elastic-system --create-namespace --wait \
@@ -92,6 +122,7 @@ helm install cnpg $CNPG_OPERATOR_CHART_DIR -n cnpg-system --create-namespace --w
 
 # install charts
 helm install infogrep $INFOGREP_CHART_DIR \
+    --set deploymentType=$DTYPE \
     --set KeyConfig.openaiKey=$OPENAI_KEY \
     --set AuthService.env.CLIENT_ID=$CLIENT_ID \
     --set AuthService.env.CLIENT_SECRET=$CLIENT_SECRET \
@@ -117,12 +148,6 @@ curl -sSfL \
   -n infogrep
 
 rm ./kubectl-cnpg
-
-if nc -z localhost 11434 2>/dev/null; then
-    echo -e "Ollama running on localhost"
-else
-    echo -e "\033[0;31m \t !!!!! Looks like Ollama is not running on your machine, please ensure that it is running. \t !!!!!"
-fi
 
 echo -e "\033[1;33m \t ***** InfoGrep Successfully Deployed! ***** \t"
 

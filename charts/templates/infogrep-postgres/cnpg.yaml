@@ -29,7 +29,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     resizeInUseVolumes: false
-    storageClass: csi-cinder-high-speed
+    storageClass: {{ .Values.InfogrepPostgres.persistence.storageClass }}
     size: {{ .Values.InfogrepPostgres.persistence.size }}
   managed:
     services:

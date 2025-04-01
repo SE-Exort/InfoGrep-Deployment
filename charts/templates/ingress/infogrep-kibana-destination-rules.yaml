@@ -1,3 +1,4 @@
+{{- if eq .Values.deploymentType "cloud" }}
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:
@@ -13,3 +14,4 @@ spec:
         number: 443
       loadBalancer:
         simple: LEAST_CONN
+{{- end }}

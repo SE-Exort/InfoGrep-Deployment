@@ -1,3 +1,4 @@
+{{- if eq .Values.deploymentType "cloud" }}
 apiVersion: networking.istio.io/v1
 kind: Gateway
 metadata:
@@ -23,3 +24,4 @@ spec:
       privateKey: /etc/istio/ingressgateway-certs/tls.key
     hosts:
     - "api.infogrep.ca"
+{{- end }}
