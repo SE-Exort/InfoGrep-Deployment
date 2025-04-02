@@ -21,6 +21,15 @@ spec:
     spec:
       serviceAccountName: {{ include "infogrep.aiService.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.AiService.serviceAccount.automountServiceAccountToken }}
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - hahafhaharpi4
     {{- with .Values.AiService.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
