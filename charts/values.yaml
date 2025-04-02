@@ -30,7 +30,7 @@ AiService:
   image:
     repository: ghcr.io/se-exort/ai-service
     pullPolicy: Always
-    tag: latest
+    tag: rpi-build-latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -69,7 +69,7 @@ AiService:
     externalTrafficPolicy: Cluster
     sessionAffinity: None
   # -- Ollama Container Configuration
-  ollamaCreate: "false"
+  ollamaCreate: "true"
   ollamaImage:
     repository: ollama/ollama
     pullPolicy: IfNotPresent
@@ -80,7 +80,7 @@ AiService:
         cpu: 2
         memory: 8Gi
       requests:
-        cpu: 800m
+        cpu: 1
         memory: 4Gi
 
 # -- Authentication Service Config
@@ -92,7 +92,7 @@ AuthService:
   image:
     repository: ghcr.io/se-exort/auth-service
     pullPolicy: Always
-    tag: latest
+    tag: rpi-build-latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -148,7 +148,7 @@ ChatroomService:
   image:
     repository: ghcr.io/se-exort/chatroom-service
     pullPolicy: Always
-    tag: latest
+    tag: rpi-build-latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -197,7 +197,7 @@ FileManagementService:
   image:
     repository: ghcr.io/se-exort/file-management-service
     pullPolicy: Always
-    tag: latest
+    tag: rpi-build-latest
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
@@ -251,8 +251,8 @@ MilvusConfig:
   persistence:
     volumeName: infogrep-milvus-pv
     mountPath: "/export"
-    storageClass: csi-cinder-high-speed
-    size: 3Gi
+    storageClass: longhorn
+    size: 5Gi
     accessModes:
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Delete
@@ -283,7 +283,7 @@ MilvusEtcdConfig:
   persistence:
     volumeName: infogrep-milvus-etcd-pv
     mountPath: ""
-    storageClass: csi-cinder-high-speed
+    storageClass: longhorn
     size: 5Gi
     accessModes:
       - ReadWriteOnce
@@ -313,7 +313,7 @@ ElasticsearchConfig:
   persistence:
     volumeName: infogrep-logging-es-pv
     mountPath: "/usr/share/elasticsearch/data"
-    storageClass: csi-cinder-high-speed
+    storageClass: longhorn
     size: 5Gi
     accessModes:
       - ReadWriteOnce
@@ -368,8 +368,8 @@ InfogrepPostgres:
   persistence:
     volumeName: infogrep-postgres-pv
     mountPath: "/var/lib/postgresql/data"
-    storageClass: csi-cinder-high-speed
-    size: 3Gi
+    storageClass: longhorn
+    size: 5Gi
     persistentVolumeReclaimPolicy: Delete
     accessModes:
       - ReadWriteOnce
