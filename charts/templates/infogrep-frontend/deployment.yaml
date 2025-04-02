@@ -1,3 +1,4 @@
+{{- if eq .Values.deploymentType "cloud" }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -35,3 +36,4 @@ spec:
             {{- toYaml .Values.InfogrepFrontend.resources | nindent 12 }}
           ports:
             - containerPort: {{ .Values.InfogrepFrontend.containerPorts.server }}
+{{- end }}

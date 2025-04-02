@@ -1,0 +1,120 @@
+{{- if eq .Values.deploymentType "local" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: infogrep-ingress
+  namespace: infogrep
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+spec:
+  rules:
+  - host: hahafhaharpi3.local
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: infogrep-traefik-router
+            port:
+              number: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: infogrep-traefik-router
+  namespace: infogrep
+spec:
+  selector:
+    app: traefik
+  ports:
+  - name: web
+    port: 80
+    targetPort: 80
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: infogrep-ingress-route
+  namespace: infogrep
+spec:
+  routes:
+    - match: Host(`hahafhaharpi3.local`) && PathPrefix(`/ai/`)
+      kind: Rule
+      middlewares:
+        - name: ai-strip-prefix
+      services:
+        - name: infogrep-ai-service
+          port: 8004
+      priority: 10
+
+    - match: Host(`hahafhaharpi3.local`) && PathPrefix(`/auth/`)
+      kind: Rule
+      middlewares:
+        - name: auth-strip-prefix
+      services:
+        - name: infogrep-auth-service
+          port: 4000
+      priority: 10
+
+    - match: Host(`hahafhaharpi3.local`) && PathPrefix(`/chatroom/`)
+      kind: Rule
+      middlewares:
+        - name: chatroom-strip-prefix
+      services:
+        - name: infogrep-chatroom-service
+          port: 8003
+      priority: 10
+
+    - match: Host(`hahafhaharpi3.local`) && PathPrefix(`/fms/`)
+      kind: Rule
+      middlewares:
+        - name: fms-strip-prefix
+      services:
+        - name: infogrep-file-management-service
+          port: 8002
+      priority: 10
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: ai-strip-prefix
+  namespace: infogrep
+spec:
+  stripPrefix:
+    prefixes:
+      - /ai
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: auth-strip-prefix
+  namespace: infogrep
+spec:
+  stripPrefix:
+    prefixes:
+      - /auth
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: chatroom-strip-prefix
+  namespace: infogrep
+spec:
+  stripPrefix:
+    prefixes:
+      - /chatroom
+
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: fms-strip-prefix
+  namespace: infogrep
+spec:
+  stripPrefix:
+    prefixes:
+      - /fms
+{{- end }}
