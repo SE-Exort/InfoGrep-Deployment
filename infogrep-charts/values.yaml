@@ -19,7 +19,6 @@ deploymentType: local
 
 KeyConfig:
   openaiKey: ""
-  serpapiKey: ""
 
 # -- Ai Service Config
 AiService:
@@ -364,6 +363,10 @@ InfogrepPostgres:
   # -- Container Ports
   containerPorts:
     postgres: 5432
+  # -- CNPG services
+  postgresService:
+    ro-enabled: "true"
+    r-enabled: "true"
   # -- PVC Config
   persistence:
     volumeName: infogrep-postgres-pv

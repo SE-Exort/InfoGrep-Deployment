@@ -1,0 +1,48 @@
+fullnameOverride: ""
+deploymentType: local
+replicaCount: 1
+
+# -- Ai Service overrides
+AiService:
+  ollamaCreate: "false"
+  env:
+    openaiKey: ""
+
+# -- Auth Service overrides
+AuthService:
+  env:
+    CLIENT_ID: ""
+    CLIENT_SECRET: "" 
+    DOMAIN: ""
+    APP_SECRET_KEY: ""
+    REDIRECT_URI: ""
+    FRONTEND_LOGIN_URI: ""
+
+# -- Milvus overrides
+MilvusConfig:
+  serviceType: ClusterIP
+  standaloneReplica: 1
+  env:
+    username: "infogrep"
+    password: ""
+    rootPassword: ""
+
+# -- Elasticsearch overrides
+ElasticsearchConfig:
+  replicaCount: 1
+  defaultPodSpec: "true"
+
+# -- Kibana overrides
+KibanaConfig:
+  replicaCount: 1
+  serviceType: "NodePort"
+  defaultPodSpec: "true"
+
+InfogrepPostgres:
+  replicaCount: 2
+  postgresService:
+    ro-enabled: "true"
+    r-enabled: "true"
+  env:
+    username: ""
+    password: ""
