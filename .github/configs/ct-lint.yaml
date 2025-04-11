@@ -4,7 +4,7 @@
 remote: origin
 target-branch: main
 chart-dirs:
-  - charts
+  - infogrep-charts
 validate-chart-schema: false
 validate-maintainers: true
 validate-yaml: true

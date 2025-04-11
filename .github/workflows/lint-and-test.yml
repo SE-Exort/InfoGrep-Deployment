@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Run ah lint
-        working-directory: ./charts
+        working-directory: ./infogrep-charts
         run: ah lint
 
   chart-test:
