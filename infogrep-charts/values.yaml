@@ -17,8 +17,16 @@ namespace: infogrep
 domain: local.infogrep.ai
 deploymentType: local
 
-KeyConfig:
-  openaiKey: ""
+globals:
+# -- subcharts config
+  cloudnative-pg-charts:
+    enabled: true
+  eck-operator-charts:
+    enabled: true
+  milvus-operator-charts:
+    enabled: true
+  istio-charts:
+    enabled: true
 
 # -- Ai Service Config
 AiService:
@@ -33,6 +41,10 @@ AiService:
   # -- GHCR Image Pull Secret
   imagePullSecrets:
     - name: ghcr
+  # -- Ai Service Env
+  env:
+    openaiKey: ""
+    ollamaUrl: ""
   # -- Service Account
   serviceAccount:
     create: true
@@ -297,6 +309,12 @@ MilvusEtcdConfig:
                   - nodepool-c3033ca4-523c-4377-8d-node-68ce5c
 
 # -- Elasticsearch Configurations
+eck-operator-charts:
+  podAnnotations:
+    sidecar.istio.io/inject: "true"
+    traffic.sidecar.istio.io/includeInboundPorts: "*"
+    traffic.sidecar.istio.io/excludeInboundPorts: "9443"
+
 ElasticsearchConfig:
   name: elasticsearch-logs
   replicaCount: 1

@@ -7,6 +7,7 @@ AiService:
   ollamaCreate: "false"
   env:
     openaiKey: ""
+    ollamaUrl: ""
 
 # -- Auth Service overrides
 AuthService:
@@ -44,5 +45,5 @@ InfogrepPostgres:
     ro-enabled: "true"
     r-enabled: "true"
   env:
-    username: ""
+    username: "postgres"
     password: ""
