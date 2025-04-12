@@ -8,6 +8,8 @@ AiService:
   env:
     openaiKey: ""
     ollamaUrl: ""
+  service:
+    type: ClusterIP
 
 # -- Auth Service overrides
 AuthService:
@@ -18,6 +20,16 @@ AuthService:
     APP_SECRET_KEY: ""
     REDIRECT_URI: ""
     FRONTEND_LOGIN_URI: ""
+  service:
+    type: ClusterIP
+
+ChatroomService:
+  service:
+    type: ClusterIP
+
+FileManagementService:
+  service:
+    type: ClusterIP
 
 # -- Milvus overrides
 MilvusConfig:

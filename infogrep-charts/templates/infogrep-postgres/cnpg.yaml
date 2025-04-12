@@ -29,7 +29,13 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
     resizeInUseVolumes: false
+    {{- if eq .Values.deploymentType "cloud" }}
     storageClass: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+    {{- else if eq .Values.deploymentType "local" }}
+    storageClass: longhorn
+    {{- else if eq .Values.deploymentType "dev" }}
+    storageClass: csi-hostpath-sc
+    {{- end }}
     size: {{ .Values.InfogrepPostgres.persistence.size }}
   managed:
     services:

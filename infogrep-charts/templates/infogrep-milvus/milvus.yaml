@@ -24,7 +24,13 @@ spec:
             {{- toYaml .Values.MilvusEtcdConfig.resources | nindent 12 }}
           persistence:
             enabled: true
-            storageClass: {{ .Values.MilvusEtcdConfig.persistence.storageClass }}
+            {{- if eq .Values.deploymentType "cloud" }}
+            storageClass: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+            {{- else if eq .Values.deploymentType "local" }}
+            storageClass: longhorn
+            {{- else if eq .Values.deploymentType "dev" }}
+            storageClass: csi-hostpath-sc
+            {{- end }}
             size: {{ .Values.MilvusEtcdConfig.persistence.size }}
             {{- with .Values.MilvusEtcdConfig.persistence.accessModes }}
             accessModes:
@@ -40,7 +46,13 @@ spec:
             {{- toYaml .Values.MilvusConfig.resources | nindent 12 }}
           persistence:
             enabled: true
-            storageClass: {{ .Values.MilvusConfig.persistence.storageClass }}
+            {{- if eq .Values.deploymentType "cloud" }}
+            storageClass: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+            {{- else if eq .Values.deploymentType "local" }}
+            storageClass: longhorn
+            {{- else if eq .Values.deploymentType "dev" }}
+            storageClass: csi-hostpath-sc
+            {{- end }}
             size: {{ .Values.MilvusConfig.persistence.size }}
             {{- with .Values.MilvusConfig.persistence.accessModes }}
             accessModes:

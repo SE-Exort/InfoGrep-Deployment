@@ -281,7 +281,6 @@ metadata:
     app.kubernetes.io/version: "v2.0.0"
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/part-of: "kiali"
-  annotations:
 spec:
   ports:
   - name: http

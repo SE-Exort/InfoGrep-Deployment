@@ -4,27 +4,6 @@ description: Helm Chart for InfoGrep Kubernetes Manifests
 type: application
 version: 0.1.0
 appVersion: "0.1.0"
-dependencies:
-  - name: cloudnative-pg
-    version: 0.23.2
-    condition: cloudnative-pg-charts.enabled
-    repository: https://cloudnative-pg.github.io/charts
-  - name: eck-operator
-    version: 2.16.1
-    condition: eck-operator-charts.enabled
-    repository: https://helm.elastic.co
-  - name: milvus-operator
-    version: 1.2.1
-    condition: milvus-operator-charts.enabled
-    repository: https://zilliztech.github.io/milvus-operator/
-  - name: base
-    version: 1.24.2
-    condition: istio-charts.enabled
-    repository: https://istio-release.storage.googleapis.com/charts
-  - name: istiod
-    version: 1.24.2
-    condition: istio-charts.enabled
-    repository: https://istio-release.storage.googleapis.com/charts
 maintainers:
 - email: infogrep.uw@gmail.com
   name: infogrep

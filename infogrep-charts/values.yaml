@@ -15,18 +15,7 @@ apiVersionOverrides: {}
 replicaCount: 1
 namespace: infogrep
 domain: local.infogrep.ai
-deploymentType: local
-
-globals:
-# -- subcharts config
-  cloudnative-pg-charts:
-    enabled: true
-  eck-operator-charts:
-    enabled: true
-  milvus-operator-charts:
-    enabled: true
-  istio-charts:
-    enabled: true
+deploymentType: dev
 
 # -- Ai Service Config
 AiService:
@@ -260,21 +249,11 @@ MilvusConfig:
       cpu: 500m
       memory: 1Gi
   persistence:
-    volumeName: infogrep-milvus-pv
-    mountPath: "/export"
-    storageClass: csi-cinder-high-speed
+    storageClass: ""
     size: 3Gi
     accessModes:
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Delete
-    nodeAffinity:
-      required:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                  - nodepool-c3033ca4-523c-4377-8d-node-68ce5c
   env:
     username: "infogrep"
     password: "example"
@@ -292,29 +271,13 @@ MilvusEtcdConfig:
       cpu: 500m
       memory: 1Gi
   persistence:
-    volumeName: infogrep-milvus-etcd-pv
-    mountPath: ""
-    storageClass: csi-cinder-high-speed
+    storageClass: ""
     size: 5Gi
     accessModes:
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Delete
-    nodeAffinity:
-      required:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                  - nodepool-c3033ca4-523c-4377-8d-node-68ce5c
 
-# -- Elasticsearch Configurations
-eck-operator-charts:
-  podAnnotations:
-    sidecar.istio.io/inject: "true"
-    traffic.sidecar.istio.io/includeInboundPorts: "*"
-    traffic.sidecar.istio.io/excludeInboundPorts: "9443"
-
+# -- Elasticsearch Configuration
 ElasticsearchConfig:
   name: elasticsearch-logs
   replicaCount: 1
@@ -328,21 +291,11 @@ ElasticsearchConfig:
       memory: 4Gi
   # -- PVC Config
   persistence:
-    volumeName: infogrep-logging-es-pv
-    mountPath: "/usr/share/elasticsearch/data"
-    storageClass: csi-cinder-high-speed
+    storageClass: ""
     size: 5Gi
     accessModes:
       - ReadWriteOnce
     persistentVolumeReclaimPolicy: Delete
-    nodeAffinity:
-      required:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                  - nodepool-c3033ca4-523c-4377-8d-node-6ac736
 
 # -- Kibana Configurations
 KibanaConfig:
@@ -387,21 +340,11 @@ InfogrepPostgres:
     r-enabled: "true"
   # -- PVC Config
   persistence:
-    volumeName: infogrep-postgres-pv
-    mountPath: "/var/lib/postgresql/data"
-    storageClass: csi-cinder-high-speed
+    storageClass: ""
     size: 3Gi
     persistentVolumeReclaimPolicy: Delete
     accessModes:
       - ReadWriteOnce
-    nodeAffinity:
-      required:
-        nodeSelectorTerms:
-          - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                  - nodepool-c3033ca4-523c-4377-8d-node-c24533
   # -- K8s Service Configuration
   service:
     annotations: {}
