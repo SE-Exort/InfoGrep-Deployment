@@ -1,11 +1,11 @@
 fullnameOverride: ""
-deploymentType: dev
+deploymentType: dev # dev | local | cloud
 replicaCount: 1
 global:
   enableMetrics: false
 
 Ingress:
-  className: "nginx"
+  className: "nginx" # nginx | traefik-v2 | traefik-v3 | istio-gateway
   host: "local.infogrep.ai"
 
 # -- Ai Service overrides
@@ -16,6 +16,8 @@ AiService:
     ollamaUrl: "host.minikube.internal:11434"
   service:
     type: ClusterIP
+  image:
+    tag: latest
 
 # -- Auth Service overrides
 AuthService:
@@ -28,14 +30,20 @@ AuthService:
     FRONTEND_LOGIN_URI: ""
   service:
     type: ClusterIP
+  image:
+    tag: latest
 
 ChatroomService:
   service:
     type: ClusterIP
+  image:
+    tag: latest
 
 FileManagementService:
   service:
     type: ClusterIP
+  image:
+    tag: latest
 
 # -- Milvus overrides
 MilvusConfig:
