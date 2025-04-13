@@ -1,13 +1,19 @@
 fullnameOverride: ""
-deploymentType: local
+deploymentType: dev
 replicaCount: 1
+global:
+  enableMetrics: false
+
+Ingress:
+  className: "nginx"
+  host: "local.infogrep.ai"
 
 # -- Ai Service overrides
 AiService:
   ollamaCreate: "false"
   env:
-    openaiKey: ""
-    ollamaUrl: ""
+    openaiKey: "placeholder"
+    ollamaUrl: "host.minikube.internal:11434"
   service:
     type: ClusterIP
 
@@ -37,8 +43,8 @@ MilvusConfig:
   standaloneReplica: 1
   env:
     username: "infogrep"
-    password: ""
-    rootPassword: ""
+    password: "placeholder"
+    rootPassword: "placeholder"
 
 # -- Elasticsearch overrides
 ElasticsearchConfig:
@@ -58,4 +64,4 @@ InfogrepPostgres:
     r-enabled: "true"
   env:
     username: "postgres"
-    password: ""
+    password: "placeholder"

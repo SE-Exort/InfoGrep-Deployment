@@ -1,4 +1,4 @@
-{{- if eq .Values.deploymentType "cloud" }}
+{{- if eq .Values.Ingress.className "istio-gateway" }}
 apiVersion: networking.istio.io/v1alpha3
 kind: DestinationRule
 metadata:

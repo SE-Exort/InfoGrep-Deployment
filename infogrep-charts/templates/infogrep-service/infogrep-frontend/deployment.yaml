@@ -20,10 +20,6 @@ spec:
       labels:
         {{- include "infogrep.labels" (dict "context" . "component" .Values.InfogrepFrontend.name "name" .Values.InfogrepFrontend.name) | nindent 8 }}
     spec:
-    {{- with .Values.InfogrepFrontend.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
       containers:
         - name: {{ .Values.InfogrepFrontend.name }}
           env:

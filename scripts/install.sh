@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# check istioctl is installed
+# check if istioctl is installed
 if ! command -v istioctl 2>&1 >/dev/null
 then
   echo "istioctl is not installed or is not in PATH! Exiting..."
@@ -16,24 +16,19 @@ fi
 INFOGREP_CHART_DIR="./infogrep-charts"
 
 # adding helm repos
-helm repo add istio https://istio-release.storage.googleapis.com/charts
 helm repo add cnpg https://cloudnative-pg.github.io/charts
 helm repo add elastic https://helm.elastic.co
 helm repo add milvus-operator https://zilliztech.github.io/milvus-operator/
 helm repo update
 
 # installing istio
-helm upgrade --install istio-base istio/base \
-  -n istio-system \
-  --set defaultRevision=default \
-  --create-namespace --wait \
-  --version 1.24.2
-
-helm upgrade --install istiod istio/istiod \
-  -n istio-system --wait \
-  --version 1.24.2
-
-istioctl install -f "${INFOGREP_CHART_DIR}/hack/mesh-config.yaml" --skip-confirmation
+if grep -q 'className: "istio-gateway"' "config.yaml"; then
+  echo "installing istio with ingress gateway"
+  istioctl install -f "${INFOGREP_CHART_DIR}/hack/mesh-config-ingressgateway.yaml" --skip-confirmation
+else
+  echo "installing default istio mesh config"
+  istioctl install -f "${INFOGREP_CHART_DIR}/hack/mesh-config-default.yaml" --skip-confirmation
+fi
 
 # installing cnpg CRD & operator
 helm upgrade --install cnpg cnpg/cloudnative-pg \

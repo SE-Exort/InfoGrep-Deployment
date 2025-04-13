@@ -18,13 +18,17 @@ Helm Charts for deploying InfoGrep
 1. Start a single node cluster with `minikube start --cpus max --memory max`, this is recommended to members that does not have too much compute resource available on there machine
    1. For the ones that want to try a multi-node cluster, run `minikube start --cpus 2 --memory 5120 --disk-size 20gb -n 3` to spin up a 3 node cluster, note that you will need at least 15G memory, 6 cpu cores, and 60G storage free to allocate, they won't all necessarily get used.
 2. Make sure to install the CSI Driver addon with `minikube addons enable volumesnapshots` and `minikube addons enable csi-hostpath-driver`
-3. Create the `config.yaml` file from the `config.template.yaml` file with `cp config.template.yaml config.yaml`. Set up the `config.yaml` with appropriate values, reach out to @TyroneHe-0926 for any questions.
-4. Run the setup script with `bash scripts/setup.sh`.
+3. Make sure to install the nginx ingress addon with `minikube addons enable ingress` and `minikube addons enable ingress-dns`
+4. Create the `config.yaml` file from the `config.template.yaml` file with `cp config.template.yaml config.yaml`. Set up the `config.yaml` with appropriate values, reach out to @TyroneHe-0926 for any questions.
+   1. `deploymentType` should be `dev`
+   2. `Ingress.className` should be `nginx`
+5. Run the setup script with `bash scripts/setup.sh`.
 
 ### Testing
 
+- Add `127.0.0.1 local.infogrep.ai` to your hosts file, for Mac users it should be `/etc/hosts`.
 - Run `minikube tunnel --cleanup` to tunnel all the services out to `127.0.0.1`. You might need to input your password.
-- For a full list of service, run `kubectl get svc -n infogrep`, any service with an external IP will be accessible.
+- You should now be able to visit local.infogrep.ai, try something like `curl local.infogrep.ai/auth/login` to verify the routing works
 
 ## Self Managed Clusters
 

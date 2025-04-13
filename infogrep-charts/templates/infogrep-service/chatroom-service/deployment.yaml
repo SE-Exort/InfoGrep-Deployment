@@ -21,10 +21,6 @@ spec:
     spec:
       serviceAccountName: {{ include "infogrep.chatroomService.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.ChatroomService.serviceAccount.automountServiceAccountToken }}
-    {{- with .Values.ChatroomService.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
       volumes:
         {{- include "infogrepClientCertVoumes" . | nindent 8 }}
       containers:

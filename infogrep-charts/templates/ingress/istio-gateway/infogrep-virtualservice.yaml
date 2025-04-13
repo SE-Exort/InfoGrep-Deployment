@@ -1,4 +1,4 @@
-{{- if eq .Values.deploymentType "cloud" }}
+{{- if eq .Values.Ingress.className "istio-gateway" }}
 apiVersion: networking.istio.io/v1
 kind: VirtualService
 metadata:
@@ -6,7 +6,7 @@ metadata:
   namespace: infogrep
 spec:
   hosts:
-  - "api.infogrep.ca"
+  - "{{ .Values.Ingress.host }}"
   gateways:
   - infogrep-gateway
   http:

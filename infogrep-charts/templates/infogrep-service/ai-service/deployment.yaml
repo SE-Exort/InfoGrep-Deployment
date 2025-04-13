@@ -21,10 +21,6 @@ spec:
     spec:
       serviceAccountName: {{ include "infogrep.aiService.serviceAccountName" . }}
       automountServiceAccountToken: {{ .Values.AiService.serviceAccount.automountServiceAccountToken }}
-    {{- with .Values.AiService.imagePullSecrets }}
-      imagePullSecrets:
-        {{- toYaml . | nindent 8 }}
-    {{- end }}
       volumes:
         {{- include "infogrepClientCertVoumes" . | nindent 8 }}
       containers:
