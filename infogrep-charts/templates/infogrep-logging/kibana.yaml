@@ -14,7 +14,7 @@ spec:
     service:
       spec:
         type: {{ .Values.KibanaConfig.serviceType }}
-  {{- if eq .Values.KibanaConfig.defaultPodSpec "false"}}
+  {{- if not .Values.KibanaConfig.defaultPodSpec }}
   podTemplate:
     spec:
       containers:

@@ -10,7 +10,7 @@ Ingress:
 
 # -- Ai Service overrides
 AiService:
-  ollamaCreate: "false"
+  ollamaCreate: false
   env:
     openaiKey: "placeholder"
     ollamaUrl: "host.minikube.internal:11434"
@@ -49,19 +49,19 @@ MilvusConfig:
 # -- Elasticsearch overrides
 ElasticsearchConfig:
   replicaCount: 1
-  defaultPodSpec: "true"
+  defaultPodSpec: true
 
 # -- Kibana overrides
 KibanaConfig:
   replicaCount: 1
   serviceType: "NodePort"
-  defaultPodSpec: "true"
+  defaultPodSpec: true
 
 InfogrepPostgres:
   replicaCount: 2
   postgresService:
-    ro-enabled: "true"
-    r-enabled: "true"
+    ro-enabled: true
+    r-enabled: true
   env:
     username: "postgres"
     password: "placeholder"

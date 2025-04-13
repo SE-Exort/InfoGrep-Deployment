@@ -55,7 +55,7 @@ spec:
             - containerPort: {{ .Values.AiService.containerPorts.server }}
           volumeMounts:
             {{- include "infogrepClientCertVolumeMounts" . | nindent 12 }}
-      {{- if eq .Values.AiService.ollamaCreate "true" }}
+      {{- if .Values.AiService.ollamaCreate }}
         - name: "{{ .Values.AiService.name }}-ollama"
           image: "{{ .Values.AiService.ollamaImage.repository}}:{{ .Values.AiService.ollamaImage.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.AiService.ollamaImage.pullPolicy }}

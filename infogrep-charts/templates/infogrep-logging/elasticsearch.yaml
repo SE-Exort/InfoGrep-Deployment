@@ -30,7 +30,7 @@ spec:
         {{- end }}
     config:
       node.store.allow_mmap: false
-    {{- if eq .Values.ElasticsearchConfig.defaultPodSpec "false"}}
+    {{- if not .Values.ElasticsearchConfig.defaultPodSpec }}
     podTemplate:
       spec:
         containers:
