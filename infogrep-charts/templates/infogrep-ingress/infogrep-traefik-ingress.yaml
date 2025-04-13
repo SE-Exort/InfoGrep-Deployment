@@ -3,39 +3,6 @@
 {{- if eq .Values.Ingress.className "traefik-v3" }}
 {{- $traefikApiVersion = "traefik.io/v1alpha1" }}
 {{- end }}
-
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: infogrep-ingress
-  namespace: {{ .Values.namespace }}
-spec:
-  ingressClassName: traefik
-  rules:
-  - host: {{ .Values.Ingress.host }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: infogrep-traefik-router
-            port:
-              number: 80
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: infogrep-traefik-router
-  namespace: {{ .Values.namespace }}
-spec:
-  selector:
-    app: traefik
-  ports:
-  - name: web
-    port: 80
-    targetPort: 80
----
 apiVersion: {{ $traefikApiVersion }}
 kind: IngressRoute
 metadata:
