@@ -1,4 +1,4 @@
-{{- if eq .Values.deploymentType "cloud" }}
+{{- if .Values.InfogrepFrontend.create }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,6 +26,8 @@ spec:
             {{- include "defaultEnv" . | nindent 12 }}
             - name: REACT_APP_INFOGREP_ENV
               value: "production"
+            - name: REACT_APP_INFOGREP_URL
+              value: {{ .Values.Ingress.host }}
           image: "{{ .Values.InfogrepFrontend.image.repository }}:{{ .Values.InfogrepFrontend.image.tag | default "latest" }}"
           imagePullPolicy: {{ .Values.InfogrepFrontend.image.pullPolicy }}
           resources:

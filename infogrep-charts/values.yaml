@@ -362,6 +362,7 @@ InfogrepPostgres:
 
 # -- Infogrep Frontend Configs
 InfogrepFrontend:
+  create: false
   name: frontend
   # -- Default namespace
   namespace: ""

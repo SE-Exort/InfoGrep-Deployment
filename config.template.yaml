@@ -33,18 +33,28 @@ AuthService:
   image:
     tag: latest
 
+# -- Chatroom Service overrides
 ChatroomService:
   service:
     type: ClusterIP
   image:
     tag: latest
 
+# -- File Management Service overrides
 FileManagementService:
   service:
     type: ClusterIP
   image:
     tag: latest
 
+# -- UI service overrides
+InfogrepFrontend:
+  create: true
+  service:
+    type: LoadBalancer
+  image:
+    tag: latest
+  
 # -- Milvus overrides
 MilvusConfig:
   serviceType: ClusterIP
