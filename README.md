@@ -2,7 +2,7 @@
 
 Helm Charts for deploying InfoGrep
 
-## Minikube
+## Development with Minikube
 
 ### Dependencies
 
@@ -38,5 +38,14 @@ Helm Charts for deploying InfoGrep
 - [Install Istioctl and add the CLI to PATH](https://istio.io/latest/docs/setup/additional-setup/download-istio-release/).
 - [Install Longhorn](https://longhorn.io/docs/1.8.1/deploy/install/install-with-helm/). You might need to configure each node in order to properly setup Longhorn, please see the requirements [here](https://longhorn.io/docs/1.8.1/deploy/install/#installation-requirements)
 
-### Testing (WIP)
+### Setup Steps
 
+1. We currently support traefikv2, traefikv3, nginx, and istio-ingress-gateway as ingress classes, please make sure the ingress controller is deployed before installing InfoGrep. 
+2. Create the `config.yaml` file from the `config.template.yaml` file with `cp config.template.yaml config.yaml`. Set up the `config.yaml` with appropriate values, reach out to @TyroneHe-0926 for any questions.
+   1. `deploymentType` should be `local`
+   2. change `Ingress.host` to your host for infogrep (e.g. infogrep.mydomain.com)
+3. Run the setup script with `bash scripts/setup.sh`.
+
+### Testing
+
+- InfoGrep will be avalible the host configured in config.yaml. Try `curl http://infogrephost/ai/api/docs` to verify the routing works.
