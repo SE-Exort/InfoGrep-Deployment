@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "infogrep.chatroomService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.ChatroomService.name "name" .Values.ChatroomService.name) | nindent 4 }}
+spec:
+  {{- if .Values.ChatroomService.replicaCount }}
+  replicas: {{ .Values.ChatroomService.replicaCount }}
+  {{- else }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.ChatroomService.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.ChatroomService.name "name" .Values.ChatroomService.name) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "infogrep.chatroomService.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.ChatroomService.serviceAccount.automountServiceAccountToken }}
+      volumes:
+        {{- include "infogrepClientCertVoumes" . | nindent 8 }}
+      containers:
+        - name: {{ .Values.ChatroomService.name }}
+          env:
+            {{- include "defaultEnv" . | nindent 12 }}
+            {{- include "infogrepPostgresEnv" . | nindent 12 }}
+            {{- include "infogrepElasticsearchEnv" . | nindent 12 }}
+            - name: PG_DATABASE_NAME
+              value: "chatroom"
+          image: "{{ .Values.ChatroomService.image.repository }}:{{ .Values.ChatroomService.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.ChatroomService.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.ChatroomService.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.ChatroomService.containerPorts.server }}
+          volumeMounts:
+            {{- include "infogrepClientCertVolumeMounts" . | nindent 12 }}
+      initContainers:
+        {{- include "waitForPostgres" . | nindent 6 -}}

@@ -1,0 +1,24 @@
+apiVersion: kibana.k8s.elastic.co/v1
+kind: Kibana
+metadata:
+  name: {{ template "infogrep.kibanaService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.KibanaConfig.name "name" .Values.KibanaConfig.name) | nindent 4 }}
+spec:
+  version: 8.17.1
+  count: {{ .Values.KibanaConfig.replicaCount }}
+  elasticsearchRef:
+    name: {{ template "infogrep.elasticsearchService.fullname" . }}
+  http:
+    service:
+      spec:
+        type: {{ .Values.KibanaConfig.serviceType }}
+  {{- if not .Values.KibanaConfig.defaultPodSpec }}
+  podTemplate:
+    spec:
+      containers:
+      - name: kibana
+        resources:
+          {{- toYaml .Values.KibanaConfig.resources | nindent 10 }}
+  {{- end }}

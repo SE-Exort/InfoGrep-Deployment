@@ -1,0 +1,43 @@
+{{- if eq .Values.Ingress.className "nginx" }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: infogrep-ingress
+  namespace: {{ .Values.namespace }}
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: {{ .Values.Ingress.host }}
+    http:
+      paths:
+      - path: /ai(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: infogrep-ai-service
+            port:
+              number: 8004
+      - path: /auth(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: infogrep-auth-service
+            port:
+              number: 4000
+      - path: /chatroom(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: infogrep-chatroom-service
+            port:
+              number: 8003
+      - path: /fms(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: infogrep-file-management-service
+            port:
+              number: 8002
+{{- end }}

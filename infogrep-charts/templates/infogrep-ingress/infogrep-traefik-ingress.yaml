@@ -1,0 +1,88 @@
+{{- if or (eq .Values.Ingress.className "traefik-v2") (eq .Values.Ingress.className "traefik-v3") }}
+{{- $traefikApiVersion := "traefik.containo.us/v1alpha1" }}
+{{- if eq .Values.Ingress.className "traefik-v3" }}
+{{- $traefikApiVersion = "traefik.io/v1alpha1" }}
+{{- end }}
+apiVersion: {{ $traefikApiVersion }}
+kind: IngressRoute
+metadata:
+  name: infogrep-ingress-route
+  namespace: {{ .Values.namespace }}
+spec:
+  routes:
+    - match: Host(`{{ .Values.Ingress.host }}`) && PathPrefix(`/ai/`)
+      kind: Rule
+      middlewares:
+        - name: ai-strip-prefix
+      services:
+        - name: infogrep-ai-service
+          port: 8004
+      priority: 10
+
+    - match: Host(`{{ .Values.Ingress.host }}`) && PathPrefix(`/auth/`)
+      kind: Rule
+      middlewares:
+        - name: auth-strip-prefix
+      services:
+        - name: infogrep-auth-service
+          port: 4000
+      priority: 10
+
+    - match: Host(`{{ .Values.Ingress.host }}`) && PathPrefix(`/chatroom/`)
+      kind: Rule
+      middlewares:
+        - name: chatroom-strip-prefix
+      services:
+        - name: infogrep-chatroom-service
+          port: 8003
+      priority: 10
+
+    - match: Host(`{{ .Values.Ingress.host }}`) && PathPrefix(`/fms/`)
+      kind: Rule
+      middlewares:
+        - name: fms-strip-prefix
+      services:
+        - name: infogrep-file-management-service
+          port: 8002
+      priority: 10
+---
+apiVersion: {{ $traefikApiVersion }}
+kind: Middleware
+metadata:
+  name: ai-strip-prefix
+  namespace: {{ .Values.namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /ai
+---
+apiVersion: {{ $traefikApiVersion }}
+kind: Middleware
+metadata:
+  name: auth-strip-prefix
+  namespace: {{ .Values.namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /auth
+---
+apiVersion: {{ $traefikApiVersion }}
+kind: Middleware
+metadata:
+  name: chatroom-strip-prefix
+  namespace: {{ .Values.namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /chatroom
+---
+apiVersion: {{ $traefikApiVersion }}
+kind: Middleware
+metadata:
+  name: fms-strip-prefix
+  namespace: {{ .Values.namespace }}
+spec:
+  stripPrefix:
+    prefixes:
+      - /fms
+{{- end }}

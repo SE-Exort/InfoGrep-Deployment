@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "infogrep.authService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.AuthService.name "name" .Values.AuthService.name) | nindent 4 }}
+spec:
+  {{- if .Values.AuthService.replicaCount }}
+  replicas: {{ .Values.AuthService.replicaCount }}
+  {{- else }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "infogrep.selectorLabels" (dict "context" . "name" .Values.AuthService.name) | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "infogrep.labels" (dict "context" . "component" .Values.AuthService.name "name" .Values.AuthService.name) | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "infogrep.authService.serviceAccountName" . }}
+      automountServiceAccountToken: {{ .Values.AuthService.serviceAccount.automountServiceAccountToken }}
+      volumes:
+        {{- include "infogrepClientCertVoumes" . | nindent 8 }}
+      containers:
+        - name: {{ .Values.AuthService.name }}
+          env:
+            {{- include "defaultEnv" . | nindent 12 }}
+            {{- include "infogrepPostgresEnv" . | nindent 12 }}
+            {{- include "infogrepElasticsearchEnv" . | nindent 12 }}
+            - name: PG_DATABASE_NAME
+              value: "user"
+            - name: CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: client_id
+                  optional: true
+            - name: CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: client_secret
+                  optional: true
+            - name: DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: domain
+                  optional: true
+            - name: APP_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: app_secret_key
+                  optional: true
+            - name: REDIRECT_URI
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: redirect_uri
+                  optional: true
+            - name: FRONTEND_LOGIN_URI
+              valueFrom:
+                secretKeyRef:
+                  name: auth-service-secret
+                  key: frontend_login_uri
+                  optional: true
+          image: "{{ .Values.AuthService.image.repository }}:{{ .Values.AuthService.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.AuthService.image.pullPolicy }}
+          resources:
+            {{- toYaml .Values.AuthService.resources | nindent 12 }}
+          ports:
+            - containerPort: {{ .Values.AuthService.containerPorts.server }}
+          volumeMounts:
+            {{- include "infogrepClientCertVolumeMounts" . | nindent 12 }}
+      initContainers:
+        {{- include "waitForPostgres" . | nindent 6 -}}

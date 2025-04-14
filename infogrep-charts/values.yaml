@@ -1,0 +1,399 @@
+# Default values for infogrep.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# -- Provide a name in place of `infogrep`
+nameOverride: infogrep
+# -- String to fully override `"infogrep.fullname"`
+fullnameOverride: ""
+# -- Override the Kubernetes version, which is used to evaluate certain manifests
+kubeVersionOverride: ""
+# Override APIVersions
+# If you want to template helm charts but cannot access k8s API server
+# you can set api versions here
+apiVersionOverrides: {}
+replicaCount: 1
+namespace: infogrep
+deploymentType: dev
+
+global:
+  enableMetrics: true
+
+Ingress:
+  className: ""
+  host: ""
+
+# -- Ai Service Config
+AiService:
+  name: ai-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/ai-service
+    pullPolicy: Always
+    tag: latest
+  # -- Ai Service Env
+  env:
+    openaiKey: ""
+    ollamaUrl: ""
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: ai-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 8004
+  # -- Resource Limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+    nodePortHttp: 30080
+    servicePortHttp: 8004
+    targetPortHttp: 8004
+    servicePortHttpName: ai-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+  # -- Ollama Container Configuration
+  ollamaCreate: false
+  ollamaImage:
+    repository: ollama/ollama
+    pullPolicy: IfNotPresent
+    tag: latest
+    ports: 11434
+    resources:
+      limits:
+        cpu: 2
+        memory: 8Gi
+      requests:
+        cpu: 800m
+        memory: 4Gi
+
+# -- Authentication Service Config
+AuthService:
+  name: auth-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/auth-service
+    pullPolicy: Always
+    tag: latest
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: auth-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 4000
+  # -- Resource Limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  env:
+    CLIENT_ID: ""
+    CLIENT_SECRET: "" 
+    DOMAIN: ""
+    APP_SECRET_KEY: ""
+    REDIRECT_URI: ""
+    FRONTEND_LOGIN_URI: ""
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+    nodePortHttp: 30081
+    servicePortHttp: 4000
+    targetPortHttp: 4000
+    servicePortHttpName: auth-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+
+# -- Chatroom Service Config
+ChatroomService:
+  replicaCount: 1
+  name: chatroom-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/chatroom-service
+    pullPolicy: Always
+    tag: latest
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: chatroom-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 8003
+  # -- Resource Limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+    nodePortHttp: 30084
+    servicePortHttp: 8003
+    targetPortHttp: 8003
+    servicePortHttpName: chatroom-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+
+# -- File Management Service Config
+FileManagementService:
+  replicaCount: 1
+  name: file-management-service
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/file-management-service
+    pullPolicy: Always
+    tag: latest
+  # -- Service Account
+  serviceAccount:
+    create: true
+    name: file-management-service-account
+    annotations: {}
+    labels: {}
+    automountServiceAccountToken: true
+  # -- Container Ports
+  containerPorts:
+    server: 8002
+  # -- Resource Limits
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 500m
+      memory: 512Mi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+    nodePortHttp: 30086
+    servicePortHttp: 8002
+    targetPortHttp: 8002
+    servicePortHttpName: file-management-service-port
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+
+# -- Milvus Configurations
+MilvusConfig:
+  name: vectordb
+  serviceType: ClusterIP
+  standaloneReplica: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  persistence:
+    storageClass: ""
+    size: 3Gi
+    accessModes:
+      - ReadWriteOnce
+    persistentVolumeReclaimPolicy: Delete
+  env:
+    username: "infogrep"
+    password: "example"
+    rootPassword: "example"
+
+# -- Milvus Etcd Configs
+MilvusEtcdConfig:
+  name: vectordb-etcd
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  persistence:
+    storageClass: ""
+    size: 5Gi
+    accessModes:
+      - ReadWriteOnce
+    persistentVolumeReclaimPolicy: Delete
+
+# -- Elasticsearch Configuration
+ElasticsearchConfig:
+  name: elasticsearch-logs
+  replicaCount: 1
+  defaultPodSpec: true
+  resources:
+    limits:
+      cpu: 4
+      memory: 8Gi
+    requests:
+      cpu: 2
+      memory: 4Gi
+  # -- PVC Config
+  persistence:
+    storageClass: ""
+    size: 5Gi
+    accessModes:
+      - ReadWriteOnce
+    persistentVolumeReclaimPolicy: Delete
+
+# -- Kibana Configurations
+KibanaConfig:
+  name: kibana
+  replicaCount: 1
+  serviceType: ClusterIP
+  defaultPodSpec: false
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 150m
+      memory: 1Gi
+
+# -- Infogrep Postgres Configurations
+InfogrepPostgres:
+  # -- Infogrep Postgress Name
+  name: postgres
+  replicaCount: 2
+  # -- Default Docker Hub Postgres Image
+  image:
+    repository: postgres
+    pullPolicy: IfNotPresent
+    tag: latest
+  # -- Default namespace
+  namespace: ""
+  # -- Postgres Resource Config
+  resources:
+    limits:
+      cpu: 1
+      memory: 2Gi
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  # -- Container Ports
+  containerPorts:
+    postgres: 5432
+  # -- CNPG services
+  postgresService:
+    ro-enabled: "true"
+    r-enabled: "true"
+  # -- PVC Config
+  persistence:
+    storageClass: ""
+    size: 3Gi
+    persistentVolumeReclaimPolicy: Delete
+    accessModes:
+      - ReadWriteOnce
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: ClusterIP
+    nodePortHttp: 30082
+    servicePortHttp: 5432
+    targetPortHttp: 5432
+    servicePortHttpName: database
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None
+  ## -- default user name and password for local host, please override this
+  env:
+    username: postgres
+    password: example
+
+# -- Infogrep Frontend Configs
+InfogrepFrontend:
+  name: frontend
+  # -- Default namespace
+  namespace: ""
+  # -- GHCR Config
+  image:
+    repository: ghcr.io/se-exort/frontend
+    pullPolicy: Always
+    tag: latest
+  # -- Container Ports
+  containerPorts:
+    server: 3000
+  # -- Resource Limits
+  resources:
+    limits:
+      cpu: 400m
+      memory: 2Gi
+    requests:
+      cpu: 350m
+      memory: 1.5Gi
+  # -- K8s Service Configuration
+  service:
+    annotations: {}
+    labels: {}
+    type: LoadBalancer
+    nodePortHttp: 30099
+    servicePortHttp: 80
+    targetPortHttp: 3000
+    servicePortHttpName: http
+    servicePortHttpsAppProtocol: ""
+    loadBalancerClass: ""
+    loadBalancerIP: ""
+    loadBalancerSourceRanges: []
+    externalIPs: []
+    externalTrafficPolicy: Cluster
+    sessionAffinity: None

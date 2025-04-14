@@ -1,0 +1,40 @@
+apiVersion: elasticsearch.k8s.elastic.co/v1
+kind: Elasticsearch
+metadata:
+  name: {{ template "infogrep.elasticsearchService.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.ElasticsearchConfig.name "name" .Values.ElasticsearchConfig.name) | nindent 4 }}
+spec:
+  version: 8.17.1
+  nodeSets:
+  - name: default
+    count: {{ .Values.ElasticsearchConfig.replicaCount }}
+    volumeClaimTemplates:
+    - metadata:
+        name: elasticsearch-data
+      spec:
+        {{- with .Values.ElasticsearchConfig.persistence.accessModes }}
+        accessModes:
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.ElasticsearchConfig.persistence.size }}
+        {{- if eq .Values.deploymentType "cloud" }}
+        storageClassName: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+        {{- else if eq .Values.deploymentType "local" }}
+        storageClassName: longhorn
+        {{- else if eq .Values.deploymentType "dev" }}
+        storageClassName: csi-hostpath-sc
+        {{- end }}
+    config:
+      node.store.allow_mmap: false
+    {{- if not .Values.ElasticsearchConfig.defaultPodSpec }}
+    podTemplate:
+      spec:
+        containers:
+        - name: elasticsearch
+          resources:
+            {{- toYaml .Values.ElasticsearchConfig.resources | nindent 12 }}
+    {{- end }}

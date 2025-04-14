@@ -1,0 +1,9 @@
+apiVersion: v2
+name: infogrep
+description: Helm Chart for InfoGrep Kubernetes Manifests
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+maintainers:
+- email: infogrep.uw@gmail.com
+  name: infogrep

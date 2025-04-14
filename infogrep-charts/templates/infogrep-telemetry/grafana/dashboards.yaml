@@ -1,0 +1,21 @@
+{{- if .Values.global.enableMetrics }}
+apiVersion: v1
+data:
+  istio-performance-dashboard.json: {{ .Files.Get "dashboards/performance.json" | quote }}
+  pilot-dashboard.json: {{ .Files.Get "dashboards/pilot.json" | quote }}
+kind: ConfigMap
+metadata:
+  name: istio-grafana-dashboards
+  namespace: istio-system
+---
+apiVersion: v1
+data:
+  istio-extension-dashboard.json: {{ .Files.Get "dashboards/extension.json" | quote }}
+  istio-mesh-dashboard.json: {{ .Files.Get "dashboards/mesh.json" | quote }}
+  istio-service-dashboard.json: {{ .Files.Get "dashboards/service.json" | quote }}
+  istio-workload-dashboard.json: {{ .Files.Get "dashboards/workload.json" | quote }}
+kind: ConfigMap
+metadata:
+  name: istio-services-grafana-dashboards
+  namespace: istio-system
+{{- end }}

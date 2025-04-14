@@ -1,0 +1,61 @@
+apiVersion: milvus.io/v1beta1
+kind: Milvus
+metadata:
+  name: {{ template "infogrep.milvus.fullname" . }}
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: milvus
+    {{- include "infogrep.labels" (dict "context" . "component" .Values.MilvusConfig.name "name" .Values.MilvusConfig.name) | nindent 4 }}
+spec:
+  config:
+    common:
+      security:
+        authorizationEnabled: true
+  components:
+    standalone:
+      replicas: {{ .Values.MilvusConfig.standaloneReplica }}
+      serviceType: {{ .Values.MilvusConfig.serviceType }}
+  dependencies:
+    etcd:
+      inCluster:
+        values:
+          replicaCount: {{ .Values.MilvusEtcdConfig.replicaCount }}
+          resources:
+            {{- toYaml .Values.MilvusEtcdConfig.resources | nindent 12 }}
+          persistence:
+            enabled: true
+            {{- if eq .Values.deploymentType "cloud" }}
+            storageClass: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+            {{- else if eq .Values.deploymentType "local" }}
+            storageClass: longhorn
+            {{- else if eq .Values.deploymentType "dev" }}
+            storageClass: csi-hostpath-sc
+            {{- end }}
+            size: {{ .Values.MilvusEtcdConfig.persistence.size }}
+            {{- with .Values.MilvusEtcdConfig.persistence.accessModes }}
+            accessModes:
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+        deletionPolicy: Delete
+        pvcDeletion: false
+    storage:
+      inCluster:
+        values:
+          mode: standalone
+          resources:
+            {{- toYaml .Values.MilvusConfig.resources | nindent 12 }}
+          persistence:
+            enabled: true
+            {{- if eq .Values.deploymentType "cloud" }}
+            storageClass: {{ .Values.InfogrepPostgres.persistence.storageClass }}
+            {{- else if eq .Values.deploymentType "local" }}
+            storageClass: longhorn
+            {{- else if eq .Values.deploymentType "dev" }}
+            storageClass: csi-hostpath-sc
+            {{- end }}
+            size: {{ .Values.MilvusConfig.persistence.size }}
+            {{- with .Values.MilvusConfig.persistence.accessModes }}
+            accessModes:
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+ 
