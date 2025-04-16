@@ -388,7 +388,7 @@ InfogrepFrontend:
     labels: {}
     type: LoadBalancer
     nodePortHttp: 30099
-    servicePortHttp: 80
+    servicePortHttp: 3000
     targetPortHttp: 3000
     servicePortHttpName: http
     servicePortHttpsAppProtocol: ""
