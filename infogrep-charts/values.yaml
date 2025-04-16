@@ -377,10 +377,10 @@ InfogrepFrontend:
   # -- Resource Limits
   resources:
     limits:
-      cpu: 400m
+      cpu: 500m
       memory: 2Gi
     requests:
-      cpu: 350m
+      cpu: 500m
       memory: 1.5Gi
   # -- K8s Service Configuration
   service:
