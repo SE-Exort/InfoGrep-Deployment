@@ -98,11 +98,23 @@ MilvusConfig:
     username: "infogrep"
     password: "placeholder"
     rootPassword: "placeholder"
+  persistence:
+    storageClass: ""
+    size: 5Gi
+
+MilvusEtcdConfig:
+  replicaCount: 1
+  persistence:
+    storageClass: ""
+    size: 5Gi
 
 # -- Elasticsearch overrides
 ElasticsearchConfig:
   replicaCount: 1
   defaultPodSpec: true
+  persistence:
+    storageClass: ""
+    size: 3Gi
 
 # -- Kibana overrides
 KibanaConfig:
@@ -118,3 +130,6 @@ InfogrepPostgres:
   env:
     username: "postgres"
     password: "placeholder"
+  persistence:
+    storageClass: ""
+    size: 3Gi
